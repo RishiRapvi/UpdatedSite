@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rishi Singhvi</title>
+  <meta
+    name="description"
+    content="Rishi Singhvi builds thoughtful software, computer vision products, and founder communities from Ohio State."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;800&family=Roboto+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --bg-soft: #11151a;
+      --panel: rgba(16, 21, 27, 0.88);
+      --panel-soft: rgba(255, 255, 255, 0.03);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f3f5f7;
+      --muted: #b3bdc8;
+      --soft: #d8dfe8;
+      --accent: #8ec8ff;
+      --accent-strong: #6bb7ff;
+      --accent-warm: #f4bf7a;
+      --success: #a8e0bc;
+      --shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+      --radius-lg: 28px;
+      --radius-md: 20px;
+      --radius-sm: 14px;
+      --max-width: 1080px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Red Hat Display", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(142, 200, 255, 0.12), transparent 24%),
+        radial-gradient(circle at 88% 14%, rgba(244, 191, 122, 0.08), transparent 18%),
+        linear-gradient(180deg, #0c0f13 0%, #090b0f 100%);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      opacity: 0.42;
+      mask-image: radial-gradient(circle at center, black 44%, transparent 92%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .mono {
+      font-family: "Roboto Mono", monospace;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(9, 11, 15, 0.74);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .topbar-inner,
+    .hero,
+    .section,
+    .footer-inner {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(142, 200, 255, 0.28);
+      color: var(--accent);
+      background:
+        radial-gradient(circle at 28% 28%, rgba(142, 200, 255, 0.2), transparent 42%),
+        rgba(255, 255, 255, 0.03);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+
+    .brand-word {
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--soft);
+      text-transform: lowercase;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .nav a,
+    .chip-link {
+      text-decoration: none;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      transition: 180ms ease;
+    }
+
+    .nav a {
+      padding: 0.52rem 0.85rem;
+      font-size: 0.78rem;
+      font-family: "Roboto Mono", monospace;
+    }
+
+    .nav a:hover,
+    .chip-link:hover,
+    .project-card:hover,
+    .mini-card:hover,
+    .contact-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(142, 200, 255, 0.24);
+      color: var(--text);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.9fr);
+      grid-template-areas:
+        "copy photo"
+        "cta photo";
+      gap: 1.55rem 2.4rem;
+      align-items: start;
+      padding: 4.75rem 0 2.25rem;
+    }
+
+    .hero-copy-top {
+      grid-area: copy;
+    }
+
+    .hero-cta-block {
+      grid-area: cta;
+    }
+
+    .shell-line {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      padding: 0.65rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.76rem;
+      letter-spacing: 0.02em;
+    }
+
+    .prompt {
+      color: var(--accent);
+    }
+
+    .command {
+      color: var(--accent-warm);
+    }
+
+    .eyebrow {
+      display: block;
+      margin: 1.35rem 0 0.8rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(3.5rem, 10vw, 5.8rem);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      font-weight: 800;
+    }
+
+    .highlight {
+      color: var(--accent);
+    }
+
+    .lead {
+      max-width: 42rem;
+      margin: 1.2rem 0 0;
+      color: var(--soft);
+      font-size: 1.14rem;
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.6rem;
+    }
+
+    .chip-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.72rem 1rem;
+      color: var(--soft);
+      font-size: 0.93rem;
+    }
+
+    .chip-link span:first-child {
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.76rem;
+    }
+
+    .quick-notes {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 1.65rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quick-notes li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      color: var(--soft);
+      font-size: 1rem;
+    }
+
+    .quick-notes li::before {
+      content: ">";
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      margin-top: 0.05rem;
+    }
+
+    .hero-side {
+      grid-area: photo;
+      position: relative;
+    }
+
+    .photo-card {
+      position: relative;
+      padding: 1.35rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .photo-card::before {
+      content: "";
+      position: absolute;
+      inset: -15%;
+      background:
+        radial-gradient(circle at 50% 22%, rgba(142, 200, 255, 0.22), transparent 28%),
+        radial-gradient(circle at 20% 78%, rgba(244, 191, 122, 0.1), transparent 22%);
+      pointer-events: none;
+    }
+
+    .photo-wrap {
+      position: relative;
+      width: min(100%, 320px);
+      aspect-ratio: 1;
+      margin: 0 auto 1.25rem;
+      border-radius: 999px;
+      padding: 0.8rem;
+      background:
+        linear-gradient(135deg, rgba(142, 200, 255, 0.22), rgba(255, 255, 255, 0.04)),
+        rgba(255, 255, 255, 0.03);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.26);
+    }
+
+    .photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0.4rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      object-fit: cover;
+      object-position: center 18%;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .photo-caption {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .caption-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      width: fit-content;
+      padding: 0.5rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+
+    .caption-copy {
+      margin: 0;
+      color: var(--soft);
+      font-size: 0.97rem;
+    }
+
+    .section {
+      margin: 1.45rem auto 0;
+      padding: 1.8rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015)),
+        var(--panel);
+      box-shadow: var(--shadow);
+      scroll-margin-top: 6rem;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 500ms ease, transform 500ms ease;
+    }
+
+    .section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-head {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      padding: 0.58rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.74rem;
+    }
+
+    .section-head .command {
+      color: var(--accent-warm);
+    }
+
+    .section-title {
+      margin: 1.1rem 0 0.55rem;
+      font-size: clamp(2rem, 5vw, 3rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+    }
+
+    .section-intro {
+      max-width: 48rem;
+      margin: 0;
+      color: var(--soft);
+      font-size: 1.02rem;
+    }
+
+    .project-grid,
+    .mini-grid,
+    .contact-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .project-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mini-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .contact-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .project-card,
+    .mini-card,
+    .contact-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.025);
+      padding: 1.2rem;
+      transition: 180ms ease;
+    }
+
+    .card-label {
+      display: inline-block;
+      margin-bottom: 0.7rem;
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .project-card h3,
+    .mini-card h3,
+    .contact-card h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .project-card p,
+    .mini-card p,
+    .contact-card p {
+      margin: 0.7rem 0 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .project-points {
+      display: grid;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+
+    .project-point {
+      display: grid;
+      gap: 0.2rem;
+    }
+
+    .project-point strong {
+      color: var(--text);
+      font-size: 0.93rem;
+      font-weight: 700;
+    }
+
+    .project-point span {
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.025);
+      color: var(--muted);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.7rem;
+    }
+
+    .story-section {
+      background:
+        radial-gradient(circle at top right, rgba(168, 224, 188, 0.09), transparent 24%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+        rgba(12, 18, 16, 0.9);
+    }
+
+    .story-copy {
+      max-width: 50rem;
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.35rem;
+    }
+
+    .story-copy p {
+      margin: 0;
+      color: var(--soft);
+      font-size: 1.06rem;
+    }
+
+    .story-callout {
+      margin-top: 1.25rem;
+      padding: 1rem 1.1rem;
+      border-left: 3px solid rgba(168, 224, 188, 0.6);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 0 16px 16px 0;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .contact-card {
+      text-decoration: none;
+    }
+
+    .contact-card p {
+      margin-top: 0.55rem;
+    }
+
+    .footer {
+      padding: 1.45rem 0 3rem;
+    }
+
+    .footer-inner {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .bonus-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .bonus-label {
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .bonus-card p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .bonus-pill {
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(30, 215, 96, 0.08);
+      color: #8de2a6;
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+    }
+
+    .footer-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding-top: 0.15rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .project-grid,
+      .mini-grid,
+      .contact-grid,
+      .bonus-card {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        grid-template-areas:
+          "copy"
+          "photo"
+          "cta";
+        gap: 1.3rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner {
+        align-items: flex-start;
+      }
+
+      .hero {
+        padding-top: 3.35rem;
+      }
+
+      .section {
+        padding: 1.35rem;
+        scroll-margin-top: 8rem;
+      }
+
+      .lead {
+        font-size: 1.02rem;
+      }
+
+      .section-title {
+        font-size: clamp(1.8rem, 10vw, 2.4rem);
+      }
+
+      .bonus-card {
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#top" aria-label="Back to top">
+          <span class="brand-mark mono">rs</span>
+          <span class="brand-word">rishi.dev</span>
+        </a>
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="#about">about</a>
+          <a href="#projects">projects</a>
+          <a href="#lost">read this</a>
+          <a href="#connect">connect</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy-top">
+          <div class="shell-line">
+            <span class="prompt">rishi@site</span>
+            <span>:</span>
+            <span>~</span>
+            <span class="command">$ ./introduce-myself</span>
+          </div>
+          <span class="eyebrow">A builder from Chicago, now studying and shipping from Columbus.</span>
+          <h1>Rishi <span class="highlight">Singhvi</span></h1>
+          <p class="lead">
+            I like building things that make intimidating problems feel simple. Most of my work sits
+            somewhere between AI, computer vision, startups, and "there has to be a better way to do
+            this" energy.
+          </p>
+        </div>
+
+        <aside class="hero-side">
+          <div class="photo-card">
+            <div class="photo-wrap">
+              <img class="photo" src="./assets/rishi-headshot.png" alt="Portrait of Rishi Singhvi" />
+            </div>
+            <div class="photo-caption">
+              <span class="caption-pill">currently in builder mode</span>
+              <p class="caption-copy">
+                I care a lot about code that does something useful in the real world, not just code
+                that looks impressive in a demo.
+              </p>
+            </div>
+          </div>
+        </aside>
+
+        <div class="hero-cta-block">
+          <div class="hero-links">
+            <a class="chip-link" href="https://github.com/RishiRapvi" target="_blank" rel="noreferrer">
+              <span>01</span>
+              <span>GitHub</span>
+            </a>
+            <a class="chip-link" href="https://www.linkedin.com/in/lockedin999" target="_blank" rel="noreferrer">
+              <span>02</span>
+              <span>LinkedIn</span>
+            </a>
+            <a class="chip-link" href="https://faceframeai.com" target="_blank" rel="noreferrer">
+              <span>03</span>
+              <span>FaceFrame</span>
+            </a>
+            <a class="chip-link" href="./resume/Rishi_Singhvi_Resume.pdf" download>
+              <span>04</span>
+              <span>Resume</span>
+            </a>
+          </div>
+
+          <ul class="quick-notes">
+            <li>Building FaceFrame, an AI glasses try-on product that tries to make online eyewear shopping feel less like guessing.</li>
+            <li>Co-running PreFlight Startup School, where we help early founders sharpen ideas before they waste months building the wrong thing.</li>
+            <li>Studying computer science at Ohio State and learning the hard way that persistence matters way more than looking naturally gifted.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="about" data-reveal>
+        <div class="section-head">
+          <span class="prompt">rishi@site</span>
+          <span>:</span>
+          <span>~</span>
+          <span class="command">$ whoami</span>
+        </div>
+        <h2 class="section-title">I build with a human reason first.</h2>
+        <p class="section-intro">
+          The easiest way to understand how I think about code is this: I start with the frustrating
+          thing a real person is dealing with, then I work backwards until the system makes that
+          problem less annoying, less confusing, or less expensive. The code matters to me, but the
+          point of the code matters even more.
+        </p>
+
+        <div class="mini-grid">
+          <article class="mini-card">
+            <span class="card-label">what I like building</span>
+            <h3>Products with visible payoff</h3>
+            <p>If someone can feel the value in the first minute, I am interested.</p>
+          </article>
+          <article class="mini-card">
+            <span class="card-label">what I keep learning</span>
+            <h3>Speed is only good if it stays honest</h3>
+            <p>I like moving fast, but only if the product still tells the truth about how well it works.</p>
+          </article>
+          <article class="mini-card">
+            <span class="card-label">what I care about</span>
+            <h3>Clear thinking over fake complexity</h3>
+            <p>I would rather explain something well than hide behind words that sound technical.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="projects" data-reveal>
+        <div class="section-head">
+          <span class="prompt">rishi@site</span>
+          <span>:</span>
+          <span>~</span>
+          <span class="command">$ open projects.txt</span>
+        </div>
+        <h2 class="section-title">What I built, in plain English.</h2>
+        <p class="section-intro">
+          Here is the version without the resume buzzwords. For each project, I care about three
+          things: what problem I was trying to solve, what the code is actually doing, and what I
+          learned from making it work.
+        </p>
+
+        <div class="project-grid">
+          <article class="project-card">
+            <span class="card-label">featured build</span>
+            <h3>FaceFrame</h3>
+            <p>Buying glasses online still feels weirdly primitive, so I wanted to make it feel closer to trying frames on in real life.</p>
+            <div class="project-points">
+              <div class="project-point">
+                <strong>Why I built it</strong>
+                <span>I wanted to remove the "I have no idea if these will look good on me" problem.</span>
+              </div>
+              <div class="project-point">
+                <strong>What the code is doing</strong>
+                <span>It uses a MediaPipe face mesh, OpenCV overlays, and a face-shape classifier to place frames in realtime and make smarter recommendations.</span>
+              </div>
+              <div class="project-point">
+                <strong>What I learned</strong>
+                <span>People do not care how fancy the model is if the overlay feels laggy, misaligned, or untrustworthy.</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">MediaPipe</span>
+              <span class="tag">OpenCV</span>
+              <span class="tag">TensorFlow</span>
+              <span class="tag">startup</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <span class="card-label">full-stack ai tool</span>
+            <h3>ResumeIQ</h3>
+            <p>A lot of resume advice is vague, so I built something that tells people what to fix instead of just telling them to "improve their resume."</p>
+            <div class="project-points">
+              <div class="project-point">
+                <strong>Why I built it</strong>
+                <span>I wanted a tool that gives concrete feedback fast, especially for students who do not have a mentor reviewing every draft.</span>
+              </div>
+              <div class="project-point">
+                <strong>What the code is doing</strong>
+                <span>It takes a PDF, extracts the text, sends a structured prompt to Claude, and turns the result into scores, strengths, missing keywords, and specific edits.</span>
+              </div>
+              <div class="project-point">
+                <strong>What I learned</strong>
+                <span>AI feels way more trustworthy when you force it into a clean structure instead of letting it ramble.</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Flask</span>
+              <span class="tag">Claude API</span>
+              <span class="tag">pdf parsing</span>
+              <span class="tag">frontend</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <span class="card-label">computer vision</span>
+            <h3>Facial Emotion Recognition</h3>
+            <p>I wanted to see what it actually takes to move from a model that works in a notebook to one that behaves live on camera.</p>
+            <div class="project-points">
+              <div class="project-point">
+                <strong>Why I built it</strong>
+                <span>I was curious about where computer vision stops being theory and starts dealing with messy reality.</span>
+              </div>
+              <div class="project-point">
+                <strong>What the code is doing</strong>
+                <span>A CNN trained on FER-2013 runs on webcam frames after MediaPipe finds the face, then OpenCV draws the result live.</span>
+              </div>
+              <div class="project-point">
+                <strong>What I learned</strong>
+                <span>Realtime systems expose every shortcut you took while training, especially once lighting and movement enter the picture.</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">CNN</span>
+              <span class="tag">Keras</span>
+              <span class="tag">OpenCV</span>
+              <span class="tag">webcam</span>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <span class="card-label">side project pile</span>
+            <h3>Bias detector + embedded builds</h3>
+            <p>Some of my favorite projects start with "that is annoying" and end with me learning a new part of the stack because of it.</p>
+            <div class="project-points">
+              <div class="project-point">
+                <strong>News Bias Detector</strong>
+                <span>I wanted readers to have a second opinion on how a story is being framed, not just what it says.</span>
+              </div>
+              <div class="project-point">
+                <strong>ThermoGuard</strong>
+                <span>I built a temperature alert system because embedded projects force you to be honest about hardware, timing, and failure states.</span>
+              </div>
+              <div class="project-point">
+                <strong>What ties them together</strong>
+                <span>I like projects where the output is visible, understandable, and immediately testable.</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">transformers</span>
+              <span class="tag">chrome extension</span>
+              <span class="tag">ESP32</span>
+              <span class="tag">sensors</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="section-head">
+          <span class="prompt">rishi@site</span>
+          <span>:</span>
+          <span>~</span>
+          <span class="command">$ ls building-now/</span>
+        </div>
+        <h2 class="section-title">The non-code stuff matters too.</h2>
+        <p class="section-intro">
+          A lot of what I am building right now is not just code. It is founder judgment, clearer
+          communication, and learning how to turn good ideas into something durable.
+        </p>
+
+        <div class="mini-grid">
+          <article class="mini-card">
+            <span class="card-label">community</span>
+            <h3>PreFlight Startup School</h3>
+            <p>I help early founders pressure-test ideas, clean up pitches, and avoid building in a vacuum.</p>
+          </article>
+          <article class="mini-card">
+            <span class="card-label">school</span>
+            <h3>Ohio State</h3>
+            <p>I am studying computer science, but honestly a lot of the real education has come from getting humbled and still continuing.</p>
+          </article>
+          <article class="mini-card">
+            <span class="card-label">teaching</span>
+            <h3>Code Ninjas</h3>
+            <p>Teaching younger students made me better at translating hard technical ideas into normal language.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section story-section" id="lost" data-reveal>
+        <div class="section-head">
+          <span class="prompt">rishi@site</span>
+          <span>:</span>
+          <span>~</span>
+          <span class="command">$ cat read-this-if-you-feel-lost.txt</span>
+        </div>
+        <h2 class="section-title">Read this if you feel lost.</h2>
+        <div class="story-copy">
+          <p>
+            I failed Calculus BC twice in high school. I passed it the third time.
+          </p>
+          <p>
+            That did not happen because I suddenly became a genius on attempt three. It happened
+            because I got more honest. I stopped treating struggle like proof that I did not belong.
+            I asked for help. I studied with less ego. I kept showing up after it stopped being fun.
+          </p>
+          <p>
+            I still know what it feels like to sit with a bad grade, feel behind other people, and
+            wonder if maybe everyone else is built for this in a way that I am not. That feeling is
+            real. It is also not the truth.
+          </p>
+          <p>
+            If you are in the middle of a rough semester, a failure streak, or a chapter where
+            nothing seems to be clicking yet, keep going. You do not need a perfect track record to
+            build something meaningful. You need honesty, reps, and enough stubbornness to keep
+            moving when your confidence is not at full strength.
+          </p>
+        </div>
+        <div class="story-callout">
+          Failure is not a verdict. Sometimes it is just the part where you become harder to break.
+        </div>
+      </section>
+
+      <section class="section" id="connect" data-reveal>
+        <div class="section-head">
+          <span class="prompt">rishi@site</span>
+          <span>:</span>
+          <span>~</span>
+          <span class="command">$ ping socials --open</span>
+        </div>
+        <h2 class="section-title">Find me on the internet.</h2>
+        <p class="section-intro">
+          If you want to talk about startups, computer vision, building in public, or a project that
+          currently looks a little too ambitious, I am easy to reach.
+        </p>
+
+        <div class="contact-grid">
+          <a class="contact-card" href="https://github.com/RishiRapvi" target="_blank" rel="noreferrer">
+            <span class="card-label">github</span>
+            <h3>RishiRapvi</h3>
+            <p>Code, experiments, and side projects.</p>
+          </a>
+          <a class="contact-card" href="https://www.linkedin.com/in/lockedin999" target="_blank" rel="noreferrer">
+            <span class="card-label">linkedin</span>
+            <h3>lockedin999</h3>
+            <p>Writing, founder updates, and the public journey.</p>
+          </a>
+          <a class="contact-card" href="https://faceframeai.com" target="_blank" rel="noreferrer">
+            <span class="card-label">company</span>
+            <h3>FaceFrame</h3>
+            <p>The product I am pushing hardest right now.</p>
+          </a>
+          <a class="contact-card" href="mailto:rsinghvi7891@gmail.com">
+            <span class="card-label">email</span>
+            <h3>rsinghvi7891@gmail.com</h3>
+            <p>The fastest way to reach me directly.</p>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="bonus-card">
+          <div>
+            <div class="bonus-label">bonus / spotify</div>
+            <p>
+              Usually coding to late-night focus music and whatever playlist rabbit hole I fell into
+              that week. Account name: <strong>Mahesh Aithal (RS)</strong>.
+            </p>
+          </div>
+          <div class="bonus-pill">low-key soundtrack</div>
+        </div>
+
+        <div class="footer-note">
+          <span>Built with clearer fonts, more honesty, and less resume voice.</span>
+          <span>Rishi Singhvi / 2026</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    document.querySelectorAll("[data-reveal]").forEach((section) => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>
