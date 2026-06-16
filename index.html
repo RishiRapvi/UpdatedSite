@@ -594,7 +594,22 @@
       font-size: 0.93rem;
     }
 
+    .bonus-link {
+      color: var(--soft);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(142, 200, 255, 0.2);
+      transition: 180ms ease;
+    }
+
+    .bonus-link:hover {
+      color: var(--text);
+      border-color: rgba(142, 200, 255, 0.5);
+    }
+
     .bonus-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 0.55rem 0.8rem;
       border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -602,6 +617,14 @@
       color: #8de2a6;
       font-family: "Roboto Mono", monospace;
       font-size: 0.72rem;
+      text-decoration: none;
+      transition: 180ms ease;
+    }
+
+    .bonus-pill:hover {
+      transform: translateY(-2px);
+      border-color: rgba(30, 215, 96, 0.28);
+      background: rgba(30, 215, 96, 0.14);
     }
 
     .footer-note {
@@ -1004,10 +1027,25 @@
             <div class="bonus-label">bonus / spotify</div>
             <p>
               Usually coding to late-night focus music and whatever playlist rabbit hole I fell into
-              that week. Account name: <strong>Mahesh Aithal (RS)</strong>.
+              that week. Account:
+              <a
+                class="bonus-link"
+                href="https://open.spotify.com/user/31hpqr3lwz6jeevlxlqtazh4cszi"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Mahesh Aithal (RS)
+              </a>.
             </p>
           </div>
-          <div class="bonus-pill">low-key soundtrack</div>
+          <a
+            class="bonus-pill"
+            href="https://open.spotify.com/user/31hpqr3lwz6jeevlxlqtazh4cszi"
+            target="_blank"
+            rel="noreferrer"
+          >
+            open spotify
+          </a>
         </div>
 
         <div class="footer-note">
