@@ -544,8 +544,10 @@
       position: relative;
       z-index: 1;
       font-size: clamp(3.1rem, 8vw, 5.5rem);
-      font-weight: 800;
-      letter-spacing: -0.08em;
+      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 1;
       color: rgba(243, 245, 247, 0.9);
       text-shadow: 0 12px 30px rgba(0, 0, 0, 0.26);
     }
@@ -568,13 +570,6 @@
     .widget-art--emotion {
       background:
         radial-gradient(circle at 50% 26%, rgba(255, 188, 131, 0.22), transparent 24%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
-        rgba(255, 255, 255, 0.02);
-    }
-
-    .widget-art--bias {
-      background:
-        radial-gradient(circle at 50% 24%, rgba(255, 146, 146, 0.18), transparent 24%),
         linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)),
         rgba(255, 255, 255, 0.02);
     }
@@ -1086,7 +1081,7 @@
         <div class="project-showcase">
           <button class="project-widget project-widget--feature" type="button" data-project="faceframe">
             <div class="widget-art widget-art--faceframe">
-              <span class="widget-glyph">FF</span>
+              <span class="widget-glyph">🕶️</span>
             </div>
             <div class="widget-copy">
               <span class="card-label">featured build</span>
@@ -1099,7 +1094,7 @@
 
           <button class="project-widget" type="button" data-project="resumeiq">
             <div class="widget-art widget-art--resume">
-              <span class="widget-glyph">RQ</span>
+              <span class="widget-glyph">📄</span>
             </div>
             <div class="widget-copy">
               <span class="card-label">ai tool</span>
@@ -1111,7 +1106,7 @@
 
           <button class="project-widget" type="button" data-project="emotion">
             <div class="widget-art widget-art--emotion">
-              <span class="widget-glyph">:)</span>
+              <span class="widget-glyph">🎭</span>
             </div>
             <div class="widget-copy">
               <span class="card-label">computer vision</span>
@@ -1121,21 +1116,9 @@
             </div>
           </button>
 
-          <button class="project-widget" type="button" data-project="bias">
-            <div class="widget-art widget-art--bias">
-              <span class="widget-glyph">NB</span>
-            </div>
-            <div class="widget-copy">
-              <span class="card-label">browser tool</span>
-              <h3>News Bias Detector</h3>
-              <p>I wanted a second opinion on how an article is being framed, not just what it says.</p>
-              <div class="widget-hint mono">read the build log -></div>
-            </div>
-          </button>
-
           <button class="project-widget" type="button" data-project="thermoguard">
             <div class="widget-art widget-art--thermo">
-              <span class="widget-glyph">TG</span>
+              <span class="widget-glyph">🌡️</span>
             </div>
             <div class="widget-copy">
               <span class="card-label">embedded</span>
@@ -1147,7 +1130,7 @@
 
           <button class="project-widget" type="button" data-project="preflight">
             <div class="widget-art widget-art--preflight">
-              <span class="widget-glyph">PF</span>
+              <span class="widget-glyph">🚀</span>
             </div>
             <div class="widget-copy">
               <span class="card-label">founder system</span>
@@ -1326,39 +1309,53 @@
       faceframe: {
         command: "$ cat faceframe.md",
         title: "FaceFrame",
-        subtitle: "The short version: I got tired of online glasses shopping feeling like guesswork dressed up as ecommerce.",
+        subtitle: "This started as me being annoyed by how dumb glasses shopping felt, and it slowly turned into one of the most ambitious things I have ever tried to build.",
         stack: ["MediaPipe", "OpenCV", "TensorFlow", "Face Mesh", "Computer Vision"],
         sections: [
           {
-            title: "🧠 The itch that started it",
+            title: "Where it started",
             paragraphs: [
-              "Buying glasses online is weirdly stressful for how common it is. You are supposed to make a style decision based on flat product photos, a vague sense of your face shape, and pure optimism. That felt like one of those product problems everyone has accepted even though it is clearly broken.",
-              "What pulled me in was not just the technical challenge. It was the fact that a better experience could remove a very human kind of hesitation. If someone can see frames sit on their face in a way that feels believable, the whole purchase decision gets lighter."
+              "FaceFrame started with a very simple frustration: buying glasses, whether online or in person, feels way more random than it should. You try on pair after pair, stare into a tiny mirror, ask your friends what they think, and still leave wondering whether you actually picked something that fits your face or whether you just got tired and settled. Online is even worse because now you are making the same decision through static product photos and imagination.",
+              "That bothered me because it felt like a massive user experience failure hiding in plain sight. Glasses are personal. They change how you look, how confident you feel, and how people read your face. The fact that the buying experience still feels like educated guessing made it feel like a problem worth obsessing over."
             ]
           },
           {
-            title: "🛠️ What I actually built",
+            title: "What I built first",
             paragraphs: [
-              "The core of FaceFrame is a realtime try-on flow. I used a dense face mesh so the overlay has enough landmarks to feel anchored instead of floating around like a sticker slapped on a webcam feed. That matters more than people think. If the frame alignment is even slightly off, the illusion collapses immediately.",
-              "I also pushed the project beyond a simple overlay demo. The longer-term idea was to pair the visual try-on with face-shape understanding so the product could eventually help users answer a more interesting question than 'can I place this image on a face?' The real question is 'which frames actually fit me and why?'"
+              "At the beginning, this was a solo build. I put together the MVP from scratch and went deep into the computer vision side of it because I wanted the experience to feel real, not like a gimmick. The core system used facial mesh detection, machine learning, and AR rendering so frames could actually sit on a live face instead of floating around like clip art.",
+              "Technically, that meant using tools like MediaPipe, TensorFlow, and OpenCV to make the try-on experience feel anchored and responsive. But even in that first version, I was never chasing the novelty of putting glasses on a webcam feed. I cared about a more interesting question: can software help someone feel genuinely more certain about what looks right on them?"
             ]
           },
           {
-            title: "😵 What kept fighting me",
+            title: "The moment the project changed",
             paragraphs: [
-              "This project reminded me that computer vision demos can look impressive long before they are trustworthy. The hard part was not getting a model to run. The hard part was making the whole interaction feel stable through motion, different lighting, awkward camera angles, and normal human fidgeting.",
-              "I learned that latency, alignment drift, and product trust are all tied together. Users do not grade you on your architecture. They grade you on whether the result feels believable in two seconds. FaceFrame forced me to care about perceived quality, not just technical correctness."
+              "There was a turning point in this project that I really love: at first, FaceFrame leaned hard into complex facial mapping and biometric precision. It was cool technology, but it risked becoming technology for technology's sake. Then a simple photo taken at an optometry clinic worked better than some of the more complicated ideas we were exploring, and that forced a reset.",
+              "That moment mattered because it changed the goal. Instead of asking, 'How much complexity can we cram into this?', the better question became, 'What is the simplest thing that actually helps people choose confidently?' That is such a better product question. FaceFrame got stronger the second it stopped trying to impress and started trying to reduce confusion."
             ]
           },
           {
-            title: "📈 Why I still care about it",
+            title: "When it stopped being just me",
             paragraphs: [
-              "FaceFrame sits in the exact lane I enjoy most: real machine learning, visible user payoff, and a business problem that is easy to explain to anyone. I like projects where the technical work disappears into a simple moment of confidence for the user.",
-              "It also pushed me to think like more than just an engineer. I had to think about trust, conversion, retention, and whether the feature would be good enough to earn a second use. That mix of technical depth and product thinking is a huge part of what makes the project feel alive to me."
+              "Another reason this project means so much to me is that it stopped being a lonely side quest and started becoming a team story. Nahor Hagos brought an optometric perspective to the project, which is huge when you are building something for actual eyewear decisions and not just flexing code. Sena Mekonnen helped shape the go-to-market side, brand positioning, and user journey so the product could make sense to normal people instead of only to technical people. Dev Sharma joined the broader founding-team effort and helped the project feel bigger than one person building in a corner.",
+              "That shift changed how I thought about the whole thing. Once other people start bringing domain knowledge, product sense, and storytelling into the room, the work stops being just 'can I build this?' It becomes 'can we turn this into something that people would actually trust, use, and maybe even integrate into the way eyewear is sold?'"
+            ]
+          },
+          {
+            title: "Why the story got bigger",
+            paragraphs: [
+              "FaceFrame also started getting real traction outside of my laptop. We started getting real attention on LinkedIn, a mobile version came into view, B2C and B2B possibilities opened up, and the idea of talking with eyewear companies stopped feeling ridiculous. That does something psychologically important to a project. It stops feeling like a class-adjacent experiment and starts feeling like something that could actually live in the world, whether that is at home on a phone or in-store through a kiosk experience.",
+              "I love that because it pushes the project into the messy, exciting territory where engineering meets distribution. Suddenly you are not just tuning a model. You are thinking about retail behavior, customer trust, hygiene, onboarding, business integration, and whether the product is good enough to change what people expect from an entire category."
+            ]
+          },
+          {
+            title: "Why I am still proud of it",
+            paragraphs: [
+              "FaceFrame is one of the clearest mirrors I have for the kind of builder I want to be. It combines technical depth with a problem normal people understand in five seconds. It forced me to learn how to move between code, product thinking, user psychology, and founder energy without pretending those are separate worlds.",
+              "More than anything, it gave me a story I actually care about telling. Not a fake startup fantasy. Not 'look at me, I made AI do a trick.' A real story about seeing an everyday pain point, overbuilding at first, learning to simplify, finding good people, and continuing anyway. That is the kind of project journey I want more of."
             ]
           }
         ],
-        takeaway: "The best lesson from FaceFrame was that smart products do not win by looking complicated. They win by making uncertainty feel smaller."
+        takeaway: "The best lesson from FaceFrame was that great products do not win by sounding futuristic. They win by taking a messy human decision and making it feel clearer."
       },
       resumeiq: {
         command: "$ cat resumeiq.md",
@@ -1367,28 +1364,28 @@
         stack: ["Flask", "Claude API", "PDF Parsing", "Structured Prompting", "UX"],
         sections: [
           {
-            title: "🧩 The real problem I was chasing",
+            title: "The real problem I was chasing",
             paragraphs: [
               "Most students do not struggle because they refuse to improve their resume. They struggle because the feedback they get is mushy. People say things like 'make this stronger' or 'add more impact' without translating that into something you can actually edit on the page.",
               "I wanted to build a tool that behaved less like a gatekeeper and more like a clear-thinking reviewer. The goal was not to roast someone for being imperfect. The goal was to give them fast, actionable next steps while the motivation to improve was still there."
             ]
           },
           {
-            title: "🤖 What the pipeline is doing",
+            title: "What the pipeline is doing",
             paragraphs: [
               "ResumeIQ takes a PDF, extracts the resume text, and sends it into a tightly structured prompt so the model has less room to ramble and more pressure to stay useful. Instead of producing one blob of advice, it breaks the response into categories people can inspect: strengths, missing keywords, weak sections, and specific ideas for improvement.",
               "That structure mattered a lot to me. I did not want the AI to feel like a black box handing down a verdict. I wanted it to behave more like a sharp TA who can explain what it noticed and why that observation matters."
             ]
           },
           {
-            title: "⚖️ What it taught me about AI trust",
+            title: "What it taught me about AI trust",
             paragraphs: [
               "This project made me a lot more skeptical of flashy AI outputs and a lot more interested in constrained ones. The more I forced the model into a predictable response shape, the more the product felt dependable. Users do not just want speed. They want a reason to believe the answer is worth acting on.",
               "It also reinforced that good AI UX is often about reducing emotional drag. If the tool helps someone feel less embarrassed, less overwhelmed, and more capable of improving their own work, then it is doing more than generating text. It is changing what the next ten minutes feel like."
             ]
           },
           {
-            title: "🎯 Why I am proud of it",
+            title: "Why I am proud of it",
             paragraphs: [
               "ResumeIQ is one of those projects where the engineering matters because the human outcome matters. The value is not that it produces feedback. The value is that it produces feedback in a form someone can actually use without needing a second interpreter.",
               "I like that it solves a small but very real moment of friction. A lot of software becomes meaningful by shaving confusion off common tasks, and this project made that principle feel very concrete to me."
@@ -1404,28 +1401,28 @@
         stack: ["CNN", "Keras", "FER-2013", "MediaPipe", "OpenCV"],
         sections: [
           {
-            title: "🎥 Why I wanted to build it live",
+            title: "Why I wanted to build it live",
             paragraphs: [
               "I built this because I wanted to stop hiding behind static notebooks and pretty evaluation metrics. It is easy to feel good about a model when the inputs are frozen and the environment is controlled. It is much harder to feel good when a real face shows up under bad lighting and keeps moving.",
               "That tension was exactly what interested me. I wanted a project that would force me to confront the gap between 'the model runs' and 'the experience feels stable enough that a human would trust it.'"
             ]
           },
           {
-            title: "🧪 How the system works in practice",
+            title: "How the system works in practice",
             paragraphs: [
               "The pipeline uses face detection to isolate the subject, then feeds the cropped face into a CNN trained on FER-2013 to predict emotion classes. MediaPipe handles the live tracking and OpenCV handles the camera loop, rendering, and the visible layer that the user actually sees.",
               "In other words, there are really two systems here. One is the classifier. The other is the live experience around the classifier. That second system ended up mattering just as much because it controls whether the project feels smart or fragile."
             ]
           },
           {
-            title: "🔍 Where reality pushed back",
+            title: "Where reality pushed back",
             paragraphs: [
               "Realtime input is merciless. Lighting changes, head tilt, camera quality, expression subtlety, and partial occlusion all start exposing weaknesses immediately. A prediction that looks acceptable in a notebook can start feeling suspicious when a person smiles slightly and the model jumps to something else.",
               "That was honestly the most valuable part. The project stopped being a machine learning assignment and became a lesson in systems behavior. It taught me to respect the entire path from sensor to model to screen."
             ]
           },
           {
-            title: "🧠 What I carried forward from it",
+            title: "What I carried forward from it",
             paragraphs: [
               "This build changed how I evaluate my own work. I trust live behavior more than comforting benchmark numbers now. If the experience feels unstable, that instability is not a side note. It is the product truth.",
               "It also made me think harder about responsible framing. Emotion recognition is easy to oversell, so I came away more interested in careful positioning than in pretending a noisy model understands people better than it actually does."
@@ -1434,43 +1431,6 @@
         ],
         takeaway: "The biggest lesson here was simple: if a model is going to face reality, then reality gets the final vote."
       },
-      bias: {
-        command: "$ cat news-bias-detector.md",
-        title: "News Bias Detector",
-        subtitle: "I wanted a reader to pause and think about framing instead of absorbing tone like it was just neutral fact.",
-        stack: ["Transformers", "Chrome Extension", "NLP", "Classification", "Interpretability"],
-        sections: [
-          {
-            title: "📰 What bothered me enough to build it",
-            paragraphs: [
-              "People often talk about news as if bias only exists in extreme examples, but most framing is subtler than that. Word choice, emphasis, omission, and narrative tone can all shape how a story lands before a reader even notices it happening.",
-              "That made me curious about whether a lightweight tool could interrupt that passive experience. Not by claiming perfect objectivity, but by nudging the user to ask a better question: how is this piece trying to make me see the story?"
-            ]
-          },
-          {
-            title: "🧠 What the extension is trying to do",
-            paragraphs: [
-              "The idea was to build a browser extension that can inspect the article you are currently reading, run it through a bias-oriented language pipeline, and surface a quick signal about the kind of framing it may contain. The point was not to replace reading. The point was to add a layer of reflection while the article is still in front of you.",
-              "I like this project because it treats software like a thinking aid. Instead of saying 'here is the answer,' it tries to say 'here is something worth noticing before you move on.'"
-            ]
-          },
-          {
-            title: "⚠️ Why this problem is harder than it sounds",
-            paragraphs: [
-              "Bias is not a clean yes-or-no label, which means the interface has to be careful. A one-word output can become its own kind of propaganda if it is not paired with enough explanation. That pushed me to think a lot about interpretability and about how much confidence a tool like this has any right to project.",
-              "In other words, the technical model is only half the challenge. The other half is intellectual honesty. If you build a system around a subjective domain, you have to make room for uncertainty instead of pretending it is not there."
-            ]
-          },
-          {
-            title: "🪞 What stayed with me after building it",
-            paragraphs: [
-              "This project made me care more about explanation than classification. I still find that lesson useful outside of NLP too. People are more likely to trust a system when it shows its reasoning path instead of acting like a mysterious authority.",
-              "It also reminded me that some products matter because they change behavior slightly, not because they automate a whole task. If the extension makes one person read a little more carefully, that is already meaningful."
-            ]
-          }
-        ],
-        takeaway: "The real challenge in this project was not just making a prediction. It was making that prediction intellectually fair."
-      },
       thermoguard: {
         command: "$ cat thermoguard.md",
         title: "ThermoGuard",
@@ -1478,35 +1438,35 @@
         stack: ["ESP32", "DHT11", "I2C LCD", "Embedded C", "Sensor Debugging"],
         sections: [
           {
-            title: "🌡️ Why I chose this problem",
+            title: "Why I chose this problem",
             paragraphs: [
               "ThermoGuard started as a simple but practical question: how do you monitor a space that needs to stay within a safe temperature range without depending on a full computer or a cloud service? I liked that it had a clear use case right away. Server rooms, grow tents, storage areas, and other sensitive environments all need local awareness before they need anything fancy.",
               "That made it a great embedded project for me because the success condition was easy to understand. Read the environment, let the user set a threshold, and make the system clearly react when the temperature crosses that line."
             ]
           },
           {
-            title: "🔌 How the system actually works",
+            title: "How the system actually works",
             paragraphs: [
               "The final design used an ESP32 as the controller, a DHT11 on GPIO 4 for temperature and humidity, an I2C LCD at address 0x27 over GPIO 21 and 22 for live display, and a potentiometer on GPIO 34 so the user could set a threshold from about 20C to 40C. On the output side, the system drove a red LED on GPIO 25 and a green LED on GPIO 27 to show alert versus safe state.",
               "In code, the logic is intentionally simple: every second, read the potentiometer, map its raw analog value from 0 to 4095 into the threshold range, read temperature and humidity from the sensor, and compare the current temperature to the threshold. If the sensor read fails, the LCD prints a clear error message. If the temperature is above threshold, the alert state turns on. If not, the system stays calm."
             ]
           },
           {
-            title: "🧪 How I built and tested it",
+            title: "How I built and tested it",
             paragraphs: [
               "One thing I am genuinely happy about here is that I did not try to brute-force the entire circuit at once. In the report, I documented a subsystem-by-subsystem process: verify the DHT11 by itself, confirm the LCD wiring and address, test the potentiometer mapping, check the LEDs independently, and only then move to full integration. That approach kept the debugging manageable because I always knew which part I was validating.",
               "The final integrated build hit the core requirements cleanly. The LCD updates once per second, the potentiometer smoothly changes the threshold, and the red or green LED tells you immediately whether the space is in a safe zone. I especially liked the simplest physical test in the report: warming the DHT11 by hand to push the reading over the threshold and watching the state flip in real time."
             ]
           },
           {
-            title: "🚨 The buzzer problem, honestly",
+            title: "The buzzer problem, honestly",
             paragraphs: [
               "The most useful part of the report might actually be the part where something failed. I tested the piezo buzzer through a transistor on GPIO 26, verified the GPIO signal, checked the transistor wiring, swapped parts, and still could not get audible output. The likely causes I documented were either a bad buzzer unit or a mismatch with the available 3.3 V drive conditions.",
               "Instead of pretending that did not happen, I left that story in. The code still contains the buzzer logic, but the final report explains that the buzzer was excluded from the completed physical build because it never behaved reliably. I like keeping that honesty in the project because it shows real engineering judgment: if one subsystem is not trustworthy, you do not magically call it complete."
             ]
           },
           {
-            title: "📚 What the project taught me",
+            title: "What the project taught me",
             paragraphs: [
               "ThermoGuard taught me that embedded work rewards patience in a very direct way. You have to care about timing, voltage limits, wiring, component behavior, and whether your software loop is actually calm enough to make the hardware readable. There is nowhere to hide because the system is sitting right in front of you doing exactly what your decisions told it to do.",
               "It also reinforced something I want to keep bringing into bigger projects: disciplined debugging beats frantic guessing. The read-compare-output loop is simple, but when every step is clear and verified, simple can be powerful."
@@ -1522,28 +1482,28 @@
         stack: ["Founder Community", "Mentorship", "Pitch Reviews", "Idea Testing", "Systems Thinking"],
         sections: [
           {
-            title: "🚀 Why I wanted this to exist",
+            title: "Why I wanted this to exist",
             paragraphs: [
               "A lot of early builders are not blocked by talent. They are blocked by isolation. They spend months in their own head, polishing the wrong assumptions, because they do not have a place where honest feedback arrives early and usefully.",
               "PreFlight came from wanting to reduce that waste. I wanted a space where people could pressure-test ideas, sharpen their pitch, and get called out with care before they burn a semester building something nobody wanted."
             ]
           },
           {
-            title: "🧭 What we are actually building",
+            title: "What we are actually building",
             paragraphs: [
               "At the surface level, it is a founder community and startup school. But the real build is a process: better questions, faster feedback loops, stronger idea framing, and more honest conversations about what is worth continuing. That includes pitch review, mentorship, assumption testing, and helping people separate excitement from evidence.",
               "I count that as real construction work because systems are not only made of code. They are also made of incentives, rituals, habits, and the way information moves between people."
             ]
           },
           {
-            title: "🧱 Why this feels like engineering to me",
+            title: "Why this feels like engineering to me",
             paragraphs: [
               "What I like about PreFlight is that it uses the same thinking I enjoy in software. You identify bottlenecks, reduce noise, create clearer interfaces between people, and design feedback loops that make better outcomes more likely. It is product thinking applied to humans instead of just screens.",
               "There is also a strong design challenge in building trust. People need to feel safe enough to share raw ideas, but the environment still has to be honest enough to improve them. Getting that balance right matters as much as any technical implementation detail."
             ]
           },
           {
-            title: "🤝 What I learned from making it real",
+            title: "What I learned from making it real",
             paragraphs: [
               "PreFlight taught me that meaningful building does not always end in a deploy button or a dashboard. Sometimes the thing you are building is confidence, clarity, and momentum for other people. That can still be rigorous work if you treat it seriously.",
               "It also made me more aware of how much I care about helping people move from confusion to action. Whether I am writing code or shaping a community, that through-line keeps showing up."
@@ -1602,7 +1562,7 @@
           `
         )
         .join("");
-      modalTakeaway.textContent = `💡 ${project.takeaway}`;
+      modalTakeaway.textContent = project.takeaway;
 
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden", "false");
