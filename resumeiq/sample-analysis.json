@@ -1,0 +1,43 @@
+{
+  "status": "success",
+  "mode": "sample",
+  "fileName": "sample_resume_product_engineer.pdf",
+  "overall_score": 84,
+  "summary": "This resume already has strong ingredients: clear technical range, solid product energy, and evidence of ownership. The next jump is not about adding more buzzwords. It is about making the impact lines sharper, reducing repetition, and making the strongest wins easier to spot in six seconds.",
+  "strengths": [
+    "Shows a good mix of software, AI, and product-minded project work.",
+    "Has credible signals of initiative instead of only listing coursework.",
+    "Communicates builder energy through projects, leadership, and execution."
+  ],
+  "weaknesses": [
+    "Some bullets describe activity without clearly showing measurable results.",
+    "The strongest projects are competing with each other instead of being prioritized visually.",
+    "A few lines feel too broad and could be tightened for faster recruiter scanning."
+  ],
+  "missing_keywords": [
+    "A/B testing",
+    "stakeholder communication",
+    "deployment",
+    "scalability",
+    "product analytics"
+  ],
+  "suggestions": [
+    {
+      "section": "Projects",
+      "issue": "Several bullets describe what was built but not what changed because of it.",
+      "fix": "Rewrite the top 2-3 project bullets to include an outcome, speed improvement, user insight, or adoption signal."
+    },
+    {
+      "section": "Experience",
+      "issue": "The resume has good energy, but the hierarchy makes it harder to see the best signal first.",
+      "fix": "Move the most impressive work higher and make the first bullet under each role the most outcome-driven line."
+    },
+    {
+      "section": "ATS",
+      "issue": "The wording is human and readable, but it could match job descriptions a little more directly.",
+      "fix": "Mirror a few recurring role keywords from target postings, especially around deployment, collaboration, and product execution."
+    }
+  ],
+  "ats_score": 79,
+  "ats_notes": "The structure is ATS-friendly overall, but you can improve matching by reusing exact terms from target roles. Keep section names simple and avoid overly creative labels in the resume itself."
+}

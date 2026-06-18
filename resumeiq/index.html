@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeIQ - Prototype by Rishi Singhvi</title>
+  <meta
+    name="description"
+    content="ResumeIQ is Rishi Singhvi's AI resume feedback prototype with live analysis and sample demo mode."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --ink: #111315;
+      --ink-soft: #4c5257;
+      --ink-faint: #7b8188;
+      --paper: #f7f4ee;
+      --panel: #ffffff;
+      --line: #ddd6ca;
+      --line-strong: #c7beaf;
+      --navy: #181a2f;
+      --gold: #c9a84c;
+      --gold-soft: #f3e9c9;
+      --green: #17633a;
+      --green-soft: #def3e6;
+      --red: #a61c1c;
+      --red-soft: #fde6e6;
+      --amber: #8c5310;
+      --amber-soft: #fbe8c6;
+      --blue: #2f6ef8;
+      --blue-soft: #e7efff;
+      --shadow: 0 28px 65px rgba(25, 20, 11, 0.1);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --max-width: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(201, 168, 76, 0.18), transparent 24%),
+        radial-gradient(circle at 100% 20%, rgba(47, 110, 248, 0.12), transparent 20%),
+        linear-gradient(180deg, #faf6ef 0%, #f2eee5 52%, #ece5d8 100%);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin: 0 auto;
+      padding: 1.1rem 0 4rem;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0 1.4rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 2.8rem;
+      height: 2.8rem;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--navy), #25284d);
+      color: var(--gold);
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-family: "Syne", sans-serif;
+      font-size: 1.12rem;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-copy span {
+      display: block;
+      color: var(--ink-faint);
+      font-size: 0.82rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      text-decoration: none;
+      color: var(--ink-soft);
+      transition: 180ms ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-strong);
+      color: var(--ink);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 1.4rem;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-card,
+    .workspace,
+    .results-shell {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 2.4rem;
+      background:
+        radial-gradient(circle at 85% 16%, rgba(47, 110, 248, 0.1), transparent 20%),
+        rgba(255, 255, 255, 0.86);
+    }
+
+    .hero-pill,
+    .status-pill,
+    .meta-pill,
+    .score-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.38rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .hero-pill {
+      color: var(--amber);
+      background: var(--gold-soft);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2.75rem, 7vw, 4.7rem);
+      line-height: 0.94;
+      letter-spacing: -0.06em;
+    }
+
+    h1 span {
+      color: var(--navy);
+    }
+
+    .hero-copy p {
+      margin: 1.1rem 0 0;
+      max-width: 34rem;
+      color: var(--ink-soft);
+      font-size: 1.02rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.88rem 1.05rem;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--ink-soft);
+      transition: 180ms ease;
+    }
+
+    .hero-link:hover {
+      transform: translateY(-2px);
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 1rem;
+      padding: 1.6rem;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(201, 168, 76, 0.16), transparent 26%),
+        linear-gradient(180deg, rgba(24, 26, 47, 0.96), rgba(39, 42, 71, 0.92));
+      color: #f6f1e7;
+      overflow: hidden;
+    }
+
+    .status-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .status-head strong {
+      font-family: "Syne", sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f6f1e7;
+    }
+
+    .status-pill::before,
+    .hero-pill::before,
+    .mode-note::before {
+      content: "";
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.8;
+    }
+
+    .status-pill[data-tone="live"] {
+      color: #9de3bc;
+    }
+
+    .status-pill[data-tone="sample"] {
+      color: #ffe9a6;
+    }
+
+    .status-pill[data-tone="error"] {
+      color: #ffb3b3;
+    }
+
+    .status-copy {
+      margin: 0;
+      color: rgba(246, 241, 231, 0.8);
+      line-height: 1.75;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .status-cell {
+      padding: 0.95rem;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .status-cell span {
+      display: block;
+      color: rgba(246, 241, 231, 0.62);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .status-cell strong {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .workspace {
+      margin-top: 1.4rem;
+      padding: 1.5rem;
+    }
+
+    .workspace-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .workspace-head h2 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      letter-spacing: -0.05em;
+    }
+
+    .mode-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--ink-faint);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .drop-zone {
+      border: 1.5px dashed var(--line-strong);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(251, 248, 242, 0.92), rgba(247, 242, 233, 0.92));
+      padding: 2rem;
+      text-align: center;
+      transition: border-color 180ms ease, transform 180ms ease, background 180ms ease;
+      cursor: pointer;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #f8f0df, #f4e8cf);
+      transform: translateY(-2px);
+    }
+
+    .upload-icon {
+      width: 4rem;
+      height: 4rem;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 1rem;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--navy), #25284d);
+      color: var(--gold);
+      box-shadow: var(--shadow);
+      font-size: 1.5rem;
+    }
+
+    .drop-zone h3 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: -0.03em;
+    }
+
+    .drop-zone p {
+      margin: 0.6rem auto 0;
+      max-width: 32rem;
+      color: var(--ink-faint);
+      line-height: 1.65;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    .file-pill {
+      display: none;
+      align-items: center;
+      gap: 0.7rem;
+      margin: 1rem auto 0;
+      padding: 0.75rem 1rem;
+      width: fit-content;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .workspace-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 1.2rem;
+    }
+
+    .action-btn,
+    .ghost-btn {
+      appearance: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 0.98rem 1.25rem;
+      font-family: "Syne", sans-serif;
+      font-size: 0.92rem;
+      transition: 180ms ease;
+    }
+
+    .action-btn {
+      background: var(--navy);
+      color: #ffffff;
+      box-shadow: var(--shadow);
+    }
+
+    .action-btn:hover:not(:disabled),
+    .ghost-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line-strong);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink-soft);
+    }
+
+    .helper-copy {
+      margin: 1rem 0 0;
+      color: var(--ink-faint);
+      line-height: 1.7;
+    }
+
+    .helper-copy strong {
+      color: var(--ink);
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 1rem;
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-sm);
+      background: var(--red-soft);
+      color: var(--red);
+      border-left: 3px solid var(--red);
+    }
+
+    .loader {
+      display: none;
+      align-items: center;
+      gap: 0.9rem;
+      margin-top: 1rem;
+      color: var(--ink-faint);
+    }
+
+    .loader-ring {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 999px;
+      border: 2px solid rgba(24, 26, 47, 0.18);
+      border-top-color: var(--navy);
+      animation: spin 0.85s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .results-shell {
+      display: none;
+      margin-top: 1.4rem;
+      padding: 1.6rem;
+    }
+
+    .results-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .results-top h2 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      letter-spacing: -0.05em;
+    }
+
+    .results-top p {
+      margin: 0.45rem 0 0;
+      color: var(--ink-faint);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .meta-pill {
+      background: rgba(24, 26, 47, 0.06);
+      color: var(--ink-soft);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-card,
+    .results-card {
+      padding: 1.2rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(249, 244, 236, 0.92));
+    }
+
+    .score-label {
+      color: var(--ink-faint);
+      background: rgba(24, 26, 47, 0.04);
+    }
+
+    .score-num {
+      margin-top: 0.8rem;
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+    }
+
+    .score-sub {
+      margin-top: 0.45rem;
+      color: var(--ink-faint);
+      font-size: 0.88rem;
+    }
+
+    .s-high {
+      color: var(--green);
+    }
+
+    .s-mid {
+      color: var(--amber);
+    }
+
+    .s-low {
+      color: var(--red);
+    }
+
+    .summary-block {
+      margin-bottom: 1rem;
+      padding: 1.3rem 1.35rem;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--navy), #272a47);
+      color: rgba(255, 255, 255, 0.86);
+      line-height: 1.8;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .results-card h3 {
+      margin: 0 0 0.9rem;
+      font-family: "Syne", sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: -0.03em;
+    }
+
+    .results-card--suggestions {
+      grid-column: 1 / -1;
+    }
+
+    .tag-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .tag {
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .tag-g {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .tag-r {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .tag-a {
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .suggestion {
+      padding: 0.95rem 1rem;
+      border-radius: var(--radius-sm);
+      background: rgba(24, 26, 47, 0.04);
+    }
+
+    .suggestion + .suggestion {
+      margin-top: 0.75rem;
+    }
+
+    .suggestion strong,
+    .ats-copy strong {
+      display: block;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-faint);
+      margin-bottom: 0.35rem;
+    }
+
+    .suggestion p,
+    .ats-copy p {
+      margin: 0;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+
+    .suggestion p + p {
+      margin-top: 0.45rem;
+    }
+
+    .footer-note {
+      margin-top: 1.3rem;
+      color: var(--ink-faint);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .score-grid,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(calc(100% - 1rem), var(--max-width));
+        padding-bottom: 2.5rem;
+      }
+
+      .topbar,
+      .results-top,
+      .workspace-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero-copy,
+      .hero-card,
+      .workspace,
+      .results-shell {
+        padding: 1.25rem;
+      }
+
+      .drop-zone {
+        padding: 1.4rem;
+      }
+
+      .workspace-actions,
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .action-btn,
+      .ghost-btn,
+      .hero-link,
+      .back-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <a class="brand" href="/index.html#projects">
+        <span class="brand-mark">🧠</span>
+        <span class="brand-copy">
+          <strong>ResumeIQ</strong>
+          <span>prototype inside rishi.dev</span>
+        </span>
+      </a>
+      <a class="back-link" href="/index.html#projects">Back to portfolio</a>
+    </div>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="hero-pill">prototype resurrected</span>
+        <h1>Your resume, <span>honestly reviewed.</span></h1>
+        <p>
+          ResumeIQ came from a really simple frustration: most resume feedback is vague, awkward,
+          or so generic that it barely helps you edit the page. I wanted something that could be
+          fast, specific, and human enough to actually move you to the next fix.
+        </p>
+        <p>
+          This page preserves the original product demo. If live analysis is configured, you can
+          upload a PDF and get a real breakdown. If not, the sample report still shows how the
+          product was designed to think.
+        </p>
+        <div class="hero-actions">
+          <a class="hero-link" href="/index.html#projects">Read the project story</a>
+          <a class="hero-link" href="/index.html#connect">Talk to Rishi</a>
+        </div>
+      </div>
+
+      <aside class="hero-card">
+        <div class="status-head">
+          <strong>Prototype status</strong>
+          <span class="status-pill" id="status-pill" data-tone="sample">checking</span>
+        </div>
+        <p class="status-copy" id="status-copy">
+          Checking whether the live analyzer is available in this environment.
+        </p>
+        <div class="status-grid">
+          <div class="status-cell">
+            <span>Input</span>
+            <strong>PDF resume upload</strong>
+          </div>
+          <div class="status-cell">
+            <span>Output</span>
+            <strong>Scores, weak spots, keyword gaps, next edits</strong>
+          </div>
+          <div class="status-cell">
+            <span>Best use case</span>
+            <strong>Fast resume iteration before applications</strong>
+          </div>
+          <div class="status-cell">
+            <span>Build style</span>
+            <strong>Structured prompting over flashy AI theater</strong>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="workspace">
+      <div class="workspace-head">
+        <div>
+          <h2>Try the prototype</h2>
+          <div class="mode-note" id="mode-note">checking mode</div>
+        </div>
+      </div>
+
+      <div class="drop-zone" id="drop-zone">
+        <div class="upload-icon">PDF</div>
+        <h3>Drop your resume here</h3>
+        <p>
+          Use a PDF if you want to test the live version. If the live key is not configured yet,
+          use the sample report button below to see the original UI and output format.
+        </p>
+        <input type="file" id="file-input" accept=".pdf" />
+        <div class="file-pill" id="file-pill">
+          <span>ready:</span>
+          <span id="file-name"></span>
+        </div>
+      </div>
+
+      <div class="workspace-actions">
+        <button class="action-btn" id="analyze-btn" type="button" disabled>Analyze with live model</button>
+        <button class="ghost-btn" id="sample-btn" type="button">Preview sample report</button>
+      </div>
+
+      <p class="helper-copy" id="helper-copy">
+        <strong>Live mode:</strong> checking whether the analyzer is ready.
+      </p>
+
+      <div class="loader" id="loader">
+        <div class="loader-ring"></div>
+        <span>Thinking through the resume...</span>
+      </div>
+
+      <div class="error-box" id="error-box"></div>
+    </section>
+
+    <section class="results-shell" id="results">
+      <div class="results-top">
+        <div>
+          <h2>Analysis complete</h2>
+          <p id="results-file-name">Waiting for a file or sample run.</p>
+        </div>
+        <div class="meta-row">
+          <span class="meta-pill" id="results-source">sample mode</span>
+          <span class="meta-pill" id="results-model">structured review</span>
+        </div>
+      </div>
+
+      <div class="score-grid">
+        <article class="score-card">
+          <span class="score-label">overall</span>
+          <div class="score-num" id="overall-score">--</div>
+          <div class="score-sub">out of 100</div>
+        </article>
+        <article class="score-card">
+          <span class="score-label">ATS score</span>
+          <div class="score-num" id="ats-score">--</div>
+          <div class="score-sub">out of 100</div>
+        </article>
+      </div>
+
+      <div class="summary-block" id="summary"></div>
+
+      <div class="results-grid">
+        <article class="results-card">
+          <h3>Strengths</h3>
+          <div class="tag-wrap" id="strengths"></div>
+        </article>
+
+        <article class="results-card">
+          <h3>Weaknesses</h3>
+          <div class="tag-wrap" id="weaknesses"></div>
+        </article>
+
+        <article class="results-card">
+          <h3>Missing keywords</h3>
+          <div class="tag-wrap" id="keywords"></div>
+        </article>
+
+        <article class="results-card">
+          <h3>ATS notes</h3>
+          <div class="ats-copy" id="ats-note"></div>
+        </article>
+
+        <article class="results-card results-card--suggestions">
+          <h3>Specific suggestions</h3>
+          <div id="suggestions"></div>
+        </article>
+      </div>
+
+      <p class="footer-note" id="results-footer">
+        Sample mode is ready even when the live analyzer is not.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      selectedFile: null,
+      liveReady: false,
+      sampleUrl: "/resumeiq/sample-analysis.json",
+      status: "checking",
+      model: "structured review"
+    };
+
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    const filePill = document.getElementById("file-pill");
+    const fileName = document.getElementById("file-name");
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const sampleBtn = document.getElementById("sample-btn");
+    const helperCopy = document.getElementById("helper-copy");
+    const loader = document.getElementById("loader");
+    const errorBox = document.getElementById("error-box");
+    const results = document.getElementById("results");
+    const resultsFileName = document.getElementById("results-file-name");
+    const resultsSource = document.getElementById("results-source");
+    const resultsModel = document.getElementById("results-model");
+    const summary = document.getElementById("summary");
+    const strengths = document.getElementById("strengths");
+    const weaknesses = document.getElementById("weaknesses");
+    const keywords = document.getElementById("keywords");
+    const suggestions = document.getElementById("suggestions");
+    const atsNote = document.getElementById("ats-note");
+    const overallScore = document.getElementById("overall-score");
+    const atsScore = document.getElementById("ats-score");
+    const resultsFooter = document.getElementById("results-footer");
+    const statusPill = document.getElementById("status-pill");
+    const statusCopy = document.getElementById("status-copy");
+    const modeNote = document.getElementById("mode-note");
+
+    const setScoreTone = (node, value) => {
+      node.classList.remove("s-high", "s-mid", "s-low");
+
+      if (value >= 80) {
+        node.classList.add("s-high");
+      } else if (value >= 60) {
+        node.classList.add("s-mid");
+      } else {
+        node.classList.add("s-low");
+      }
+    };
+
+    const syncButtons = () => {
+      analyzeBtn.disabled = !(state.liveReady && state.selectedFile);
+    };
+
+    const showError = (message) => {
+      errorBox.style.display = "block";
+      errorBox.textContent = message;
+    };
+
+    const clearError = () => {
+      errorBox.style.display = "none";
+      errorBox.textContent = "";
+    };
+
+    const setLoading = (visible) => {
+      loader.style.display = visible ? "inline-flex" : "none";
+      analyzeBtn.disabled = visible || !(state.liveReady && state.selectedFile);
+      sampleBtn.disabled = visible;
+    };
+
+    const applyStatus = (payload) => {
+      state.status = payload.status || "setup_required";
+      state.sampleUrl = payload.sampleUrl || state.sampleUrl;
+      state.model = payload.model || "structured review";
+      state.liveReady = state.status === "ready";
+
+      if (state.liveReady) {
+        statusPill.textContent = "live mode";
+        statusPill.dataset.tone = "live";
+        statusCopy.textContent = payload.message || "Live resume analysis is available.";
+        helperCopy.innerHTML = "<strong>Live mode:</strong> upload a PDF and the analyzer will run against the configured model.";
+        modeNote.textContent = "live analyzer ready";
+      } else if (state.status === "runtime_missing") {
+        statusPill.textContent = "demo mode";
+        statusPill.dataset.tone = "sample";
+        statusCopy.textContent = payload.message || "The sample demo is available, but the live runtime is missing packages.";
+        helperCopy.innerHTML = "<strong>Sample mode:</strong> the UI still works, and the sample report shows the intended output shape.";
+        modeNote.textContent = "sample mode only";
+      } else {
+        statusPill.textContent = "sample mode";
+        statusPill.dataset.tone = "sample";
+        statusCopy.textContent = payload.message || "Live analysis is not configured yet, so the sample report takes over.";
+        helperCopy.innerHTML = "<strong>Sample mode:</strong> preview the canned report now, then add <code>ANTHROPIC_API_KEY</code> later to turn live analysis on.";
+        modeNote.textContent = "sample mode only";
+      }
+
+      syncButtons();
+    };
+
+    const createTag = (text, className) => {
+      const tag = document.createElement("span");
+      tag.className = `tag ${className}`;
+      tag.textContent = text;
+      return tag;
+    };
+
+    const renderList = (container, values, className) => {
+      container.innerHTML = "";
+      (values || []).forEach((value) => {
+        container.appendChild(createTag(value, className));
+      });
+    };
+
+    const renderSuggestions = (items) => {
+      suggestions.innerHTML = "";
+
+      (items || []).forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "suggestion";
+        card.innerHTML = `
+          <strong>${item.section || "Suggestion"}</strong>
+          <p>${item.issue || ""}</p>
+          <p>${item.fix || ""}</p>
+        `;
+        suggestions.appendChild(card);
+      });
+    };
+
+    const renderResults = (payload, sourceLabel) => {
+      results.style.display = "block";
+      clearError();
+
+      const overall = Number(payload.overall_score || 0);
+      const ats = Number(payload.ats_score || 0);
+
+      resultsFileName.textContent = payload.fileName || "Resume analysis";
+      resultsSource.textContent = sourceLabel;
+      resultsModel.textContent = payload.mode === "live" ? state.model : "sample review";
+      overallScore.textContent = Number.isFinite(overall) ? overall : "--";
+      atsScore.textContent = Number.isFinite(ats) ? ats : "--";
+      setScoreTone(overallScore, overall);
+      setScoreTone(atsScore, ats);
+
+      summary.textContent = payload.summary || "No summary returned.";
+      renderList(strengths, payload.strengths, "tag-g");
+      renderList(weaknesses, payload.weaknesses, "tag-r");
+      renderList(keywords, payload.missing_keywords, "tag-a");
+      renderSuggestions(payload.suggestions);
+      atsNote.innerHTML = `<strong>scanner read</strong><p>${payload.ats_notes || "No ATS notes returned."}</p>`;
+
+      resultsFooter.textContent =
+        payload.mode === "live"
+          ? "Live mode is on. This report came from the uploaded PDF and the configured model."
+          : "Sample mode is on. This output is a preserved demo so the product still feels real before the live key is added.";
+
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const loadStatus = async () => {
+      try {
+        const response = await fetch("/api/resumeiq", { cache: "no-store" });
+        const payload = await response.json();
+        applyStatus(payload);
+      } catch (error) {
+        applyStatus({
+          status: "runtime_missing",
+          message: "Could not reach the ResumeIQ API, so the page fell back to sample mode."
+        });
+      }
+    };
+
+    const loadSample = async () => {
+      clearError();
+      setLoading(true);
+
+      try {
+        const response = await fetch(state.sampleUrl, { cache: "no-store" });
+        const payload = await response.json();
+        renderResults(payload, "sample mode");
+      } catch (error) {
+        showError("Could not load the sample report.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const runLiveAnalysis = async () => {
+      if (!state.liveReady || !state.selectedFile) {
+        return;
+      }
+
+      clearError();
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("resume", state.selectedFile);
+
+      try {
+        const response = await fetch("/api/resumeiq", {
+          method: "POST",
+          body: formData
+        });
+        const payload = await response.json();
+
+        if (!response.ok || payload.status === "error") {
+          throw new Error(payload.message || "ResumeIQ could not analyze this file.");
+        }
+
+        renderResults(payload, "live analysis");
+      } catch (error) {
+        showError(`${error.message} You can still preview the sample report below.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const setFile = (file) => {
+      if (!file) {
+        return;
+      }
+
+      state.selectedFile = file;
+      fileName.textContent = file.name;
+      filePill.style.display = "inline-flex";
+      syncButtons();
+    };
+
+    dropZone.addEventListener("click", (event) => {
+      if (event.target === analyzeBtn || event.target === sampleBtn || event.target === fileInput) {
+        return;
+      }
+      fileInput.click();
+    });
+
+    dropZone.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropZone.classList.add("drag");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("drag");
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropZone.classList.remove("drag");
+
+      const file = event.dataTransfer.files[0];
+      if (file && (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"))) {
+        setFile(file);
+      } else {
+        showError("Use a PDF for the live analyzer.");
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files[0]) {
+        setFile(fileInput.files[0]);
+      }
+    });
+
+    analyzeBtn.addEventListener("click", runLiveAnalysis);
+    sampleBtn.addEventListener("click", loadSample);
+
+    loadStatus();
+  </script>
+</body>
+</html>

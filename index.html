@@ -956,6 +956,39 @@
       font-size: 0.7rem;
     }
 
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .modal-actions:empty {
+      display: none;
+    }
+
+    .modal-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 0.82rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--soft);
+      text-decoration: none;
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+      transition: 180ms ease;
+    }
+
+    .modal-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(24, 111, 183, 0.32);
+      background: rgba(255, 255, 255, 0.84);
+      color: var(--text);
+    }
+
     .project-modal {
       position: fixed;
       inset: 0;
@@ -2224,7 +2257,7 @@
               <span class="card-label">ai tool</span>
               <h3>ResumeIQ</h3>
               <p>I wanted resume feedback that actually tells people what to do next.</p>
-              <div class="widget-hint mono">read the build log -></div>
+              <div class="widget-hint mono">read the build log + demo -></div>
             </div>
           </button>
 
@@ -2425,6 +2458,7 @@
             <h3 class="modal-title" id="modal-title">Project title</h3>
             <p class="modal-subtitle" id="modal-subtitle"></p>
             <div class="tag-row" id="modal-tags"></div>
+            <div class="modal-actions" id="modal-actions"></div>
           </div>
           <button class="modal-close" id="modal-close" type="button" aria-label="Close project story">✕</button>
         </div>
@@ -2793,6 +2827,9 @@
         title: "ResumeIQ",
         subtitle: "I wanted resume feedback to feel specific and useful instead of vague, intimidating, and weirdly judgmental.",
         stack: ["Flask", "Claude API", "PDF Parsing", "Structured Prompting", "UX"],
+        links: [
+          { label: "open prototype", href: "/resumeiq/" }
+        ],
         sections: [
           {
             title: "The real problem I was chasing",
@@ -2820,6 +2857,13 @@
             paragraphs: [
               "ResumeIQ is one of those projects where the engineering matters because the human outcome matters. The value is not that it produces feedback. The value is that it produces feedback in a form someone can actually use without needing a second interpreter.",
               "I like that it solves a small but very real moment of friction. A lot of software becomes meaningful by shaving confusion off common tasks, and this project made that principle feel very concrete to me."
+            ]
+          },
+          {
+            title: "Why there is a prototype page now",
+            paragraphs: [
+              "I also had a real front-end demo for this project sitting in my files, and bringing it back mattered because it shows the product thinking better than a paragraph alone ever could. The separate prototype page now preserves that original interface, keeps a sample report ready, and can switch back into live analysis mode whenever the model key is configured.",
+              "That feels right for the story of the project. ResumeIQ was never supposed to be an abstract AI concept. It was supposed to be a usable thing with a clear before-and-after moment for the person uploading the resume."
             ]
           }
         ],
@@ -2966,6 +3010,7 @@
     const modalSubtitle = document.getElementById("modal-subtitle");
     const modalCommand = document.getElementById("modal-command");
     const modalTags = document.getElementById("modal-tags");
+    const modalActions = document.getElementById("modal-actions");
     const modalBody = document.getElementById("modal-body");
     const modalTakeaway = document.getElementById("modal-takeaway");
     const modalClose = document.getElementById("modal-close");
@@ -2980,6 +3025,12 @@
       modalSubtitle.textContent = project.subtitle;
       modalTags.innerHTML = project.stack
         .map((item) => `<span class="tag">${item}</span>`)
+        .join("");
+      modalActions.innerHTML = (project.links || [])
+        .map((link) => {
+          const target = link.external ? ' target="_blank" rel="noreferrer"' : "";
+          return `<a class="modal-link" href="${link.href}"${target}>${link.label}</a>`;
+        })
         .join("");
       modalBody.innerHTML = project.sections
         .map(

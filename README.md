@@ -1,6 +1,6 @@
 # UpdatedSite
 
-Personal site for Rishi Singhvi with a live Spotify module.
+Personal site for Rishi Singhvi with a live Spotify module and a bundled ResumeIQ prototype.
 
 ## Run locally
 
@@ -9,6 +9,21 @@ python3 server.py
 ```
 
 Then open [http://127.0.0.1:4173](http://127.0.0.1:4173).
+
+## ResumeIQ prototype
+
+The ResumeIQ project now lives at [http://127.0.0.1:4173/resumeiq/](http://127.0.0.1:4173/resumeiq/).
+
+- The page always works in sample mode through `resumeiq/sample-analysis.json`.
+- Live resume analysis turns on when `ANTHROPIC_API_KEY` is present.
+- The optional model override is `ANTHROPIC_MODEL`.
+- Install the extra packages for live analysis with:
+
+```bash
+pip install -r requirements.txt
+```
+
+- Vercel will install the same packages from `requirements.txt` during deploy.
 
 ## Spotify setup
 
@@ -35,6 +50,8 @@ This repo now runs on Vercel through the same `server.py` entrypoint used locall
    `SPOTIFY_REFRESH_TOKEN`
    `SPOTIFY_PROFILE_URL`
    `SPOTIFY_PROFILE_NAME`
+   `ANTHROPIC_API_KEY` (optional, only for live ResumeIQ analysis)
+   `ANTHROPIC_MODEL` (optional)
 3. Keep `SPOTIFY_REDIRECT_URI` as the local value only if you still want local re-auth:
    `http://127.0.0.1:4173/spotify/callback`
 4. Deploy.

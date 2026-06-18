@@ -353,6 +353,15 @@ def resolve_public_file(url_path: str) -> Path | None:
     if any(part.startswith(".") for part in relative_candidate.parts):
         return None
 
+    if candidate.is_dir():
+        candidate = (candidate / "index.html").resolve()
+        try:
+            relative_candidate = candidate.relative_to(ROOT)
+        except ValueError:
+            return None
+        if any(part.startswith(".") for part in relative_candidate.parts):
+            return None
+
     if not candidate.is_file():
         return None
 
@@ -498,18 +507,30 @@ def handle_spotify_callback(environ: dict[str, str]) -> AppResponse:
 
 def wsgi_app(environ: dict[str, str], start_response):
     method = (environ.get("REQUEST_METHOD") or "GET").upper()
-    if method not in {"GET", "HEAD"}:
+    path = request_path(environ)
+
+    if path == "/api/resumeiq":
+        if method not in {"GET", "POST", "HEAD"}:
+            response = build_response(
+                b"Method not allowed",
+                status=405,
+                headers=[("Allow", "GET, POST, HEAD")],
+            )
+        else:
+            from resumeiq_service import analyze_payload, status_payload
+
+            if method == "POST":
+                status, payload = analyze_payload(environ)
+            else:
+                status, payload = status_payload()
+            response = json_response(payload, status)
+    elif method not in {"GET", "HEAD"}:
         response = build_response(
             b"Method not allowed",
             status=405,
             headers=[("Allow", "GET, HEAD")],
         )
-        start_response(f"{response.status} {HTTPStatus(response.status).phrase}", response.headers)
-        return [] if method == "HEAD" else [response.body]
-
-    path = request_path(environ)
-
-    if path in {"/", "/index.html"}:
+    elif path in {"/", "/index.html"}:
         response = serve_file(ROOT / "index.html", cache_control="no-store")
     elif path == "/api/spotify":
         status, payload = spotify_payload(load_config())
