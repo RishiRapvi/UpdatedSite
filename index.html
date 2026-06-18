@@ -310,6 +310,8 @@
 
     .photo-card {
       position: relative;
+      display: grid;
+      gap: 1rem;
       padding: 1.35rem;
       border-radius: var(--radius-lg);
       border: 1px solid var(--line);
@@ -334,7 +336,7 @@
       position: relative;
       width: min(100%, 320px);
       aspect-ratio: 1;
-      margin: 0 auto 1.25rem;
+      margin: 0 auto;
       border-radius: 999px;
       padding: 0.8rem;
       background:
@@ -946,6 +948,13 @@
       box-shadow: var(--shadow);
     }
 
+    .spotify-shell--hero {
+      gap: 0.85rem;
+      padding: 0.95rem;
+      background: rgba(255, 255, 255, 0.52);
+      box-shadow: none;
+    }
+
     .spotify-shell-top {
       display: flex;
       align-items: center;
@@ -972,11 +981,25 @@
       font-size: 0.94rem;
     }
 
+    .spotify-shell--hero .spotify-shell-top {
+      align-items: flex-start;
+    }
+
+    .spotify-shell--hero .spotify-shell-copy p {
+      max-width: none;
+      font-size: 0.88rem;
+    }
+
     .spotify-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.95fr);
       gap: 1rem;
       align-items: stretch;
+    }
+
+    .spotify-shell--hero .spotify-layout {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
     }
 
     .spotify-current-card,
@@ -986,6 +1009,12 @@
       background: rgba(255, 255, 255, 0.46);
     }
 
+    .spotify-shell--hero .spotify-current-card,
+    .spotify-shell--hero .spotify-recent-card {
+      padding: 0.8rem;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
     .spotify-current-card {
       display: flex;
       gap: 0.95rem;
@@ -993,6 +1022,10 @@
       min-width: 0;
       padding: 0.9rem;
       overflow: hidden;
+    }
+
+    .spotify-shell--hero .spotify-current-card {
+      align-items: flex-start;
     }
 
     .spotify-cover-shell {
@@ -1007,6 +1040,12 @@
         linear-gradient(135deg, rgba(29, 185, 84, 0.92), rgba(24, 111, 183, 0.92));
       border: 1px solid rgba(0, 0, 0, 0.12);
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+    }
+
+    .spotify-shell--hero .spotify-cover-shell {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 18px;
     }
 
     .spotify-cover-shell::after {
@@ -1060,6 +1099,14 @@
       margin: 0;
       color: var(--muted);
       font-size: 0.93rem;
+    }
+
+    .spotify-shell--hero .spotify-current-copy .spotify-title {
+      font-size: 1.08rem;
+    }
+
+    .spotify-shell--hero .spotify-current-copy .spotify-subtitle {
+      font-size: 0.84rem;
     }
 
     .spotify-meta {
@@ -1118,6 +1165,10 @@
       gap: 0.55rem;
     }
 
+    .spotify-shell--hero .spotify-recent-list {
+      gap: 0.45rem;
+    }
+
     .spotify-track {
       display: grid;
       grid-template-columns: 3rem minmax(0, 1fr);
@@ -1133,6 +1184,12 @@
       transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
     }
 
+    .spotify-shell--hero .spotify-track {
+      grid-template-columns: 2.75rem minmax(0, 1fr);
+      gap: 0.6rem;
+      padding: 0.42rem;
+    }
+
     .spotify-track:hover {
       transform: translateY(-2px);
       border-color: rgba(24, 111, 183, 0.28);
@@ -1144,6 +1201,12 @@
       width: 3rem;
       height: 3rem;
       border-radius: 12px;
+    }
+
+    .spotify-shell--hero .spotify-track-cover,
+    .spotify-shell--hero .spotify-track-fallback {
+      width: 2.75rem;
+      height: 2.75rem;
     }
 
     .spotify-track-cover {
@@ -1192,6 +1255,11 @@
       color: var(--muted);
       font-size: 0.88rem;
       min-height: 1.4rem;
+    }
+
+    .spotify-shell--hero .spotify-help {
+      font-size: 0.82rem;
+      min-height: 0;
     }
 
     .spotify-help code {
@@ -1571,6 +1639,61 @@
                 that looks impressive in a demo.
               </p>
             </div>
+            <div class="spotify-shell spotify-shell--hero" id="spotify-shell" data-state="loading">
+              <div class="spotify-shell-top">
+                <div class="spotify-shell-copy">
+                  <span class="spotify-label">soundtrack lately</span>
+                  <p>
+                    Lowkey bonus tab: whatever is playing while I am building, plus the last few
+                    tracks that kept the session moving.
+                  </p>
+                </div>
+                <a
+                  class="bonus-link"
+                  id="spotify-profile-link"
+                  href="https://open.spotify.com/user/31hpqr3lwz6jeevlxlqtazh4cszi"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  open spotify
+                </a>
+              </div>
+
+              <div class="spotify-layout">
+                <div class="spotify-current-card" aria-live="polite">
+                  <div class="spotify-cover-shell" aria-hidden="true">
+                    <img
+                      class="spotify-cover"
+                      id="spotify-current-cover"
+                      alt=""
+                      hidden
+                    />
+                    <div class="spotify-cover-fallback" id="spotify-current-fallback">🎧</div>
+                  </div>
+                  <div class="spotify-current-copy">
+                    <span class="spotify-label">current track</span>
+                    <p class="spotify-title" id="spotify-current-title">Loading the soundtrack...</p>
+                    <p class="spotify-subtitle" id="spotify-current-subtitle">
+                      Pulling in current and recent tracks.
+                    </p>
+                    <div class="spotify-meta" id="spotify-current-meta"></div>
+                  </div>
+                </div>
+
+                <div class="spotify-recent-card">
+                  <div class="spotify-recent-head">
+                    <span class="spotify-label">recent tracks</span>
+                    <div class="spotify-live" id="spotify-live-status">
+                      <span class="spotify-dot"></span>
+                      <span id="spotify-live-text">loading</span>
+                    </div>
+                  </div>
+                  <div class="spotify-recent-list" id="spotify-recent-list"></div>
+                </div>
+              </div>
+
+              <div class="spotify-help" id="spotify-help"></div>
+            </div>
           </div>
         </aside>
 
@@ -1884,62 +2007,6 @@
 
     <footer class="footer">
       <div class="footer-inner">
-        <div class="spotify-shell" id="spotify-shell" data-state="loading">
-          <div class="spotify-shell-top">
-            <div class="spotify-shell-copy">
-              <span class="spotify-label">bonus tab</span>
-              <p>
-                The soundtrack behind late-night builds. Current track up front, recent rotation off
-                to the side.
-              </p>
-            </div>
-            <a
-              class="bonus-link"
-              id="spotify-profile-link"
-              href="https://open.spotify.com/user/31hpqr3lwz6jeevlxlqtazh4cszi"
-              target="_blank"
-              rel="noreferrer"
-            >
-              open spotify
-            </a>
-          </div>
-
-          <div class="spotify-layout">
-            <div class="spotify-current-card" aria-live="polite">
-              <div class="spotify-cover-shell" aria-hidden="true">
-                <img
-                  class="spotify-cover"
-                  id="spotify-current-cover"
-                  alt=""
-                  hidden
-                />
-                <div class="spotify-cover-fallback" id="spotify-current-fallback">🎧</div>
-              </div>
-              <div class="spotify-current-copy">
-                <span class="spotify-label">current track</span>
-                <p class="spotify-title" id="spotify-current-title">Loading the soundtrack...</p>
-                <p class="spotify-subtitle" id="spotify-current-subtitle">
-                  Pulling in current and recent tracks.
-                </p>
-                <div class="spotify-meta" id="spotify-current-meta"></div>
-              </div>
-            </div>
-
-            <div class="spotify-recent-card">
-              <div class="spotify-recent-head">
-                <span class="spotify-label">recent tracks</span>
-                <div class="spotify-live" id="spotify-live-status">
-                  <span class="spotify-dot"></span>
-                  <span id="spotify-live-text">loading</span>
-                </div>
-              </div>
-              <div class="spotify-recent-list" id="spotify-recent-list"></div>
-            </div>
-          </div>
-
-          <div class="spotify-help" id="spotify-help"></div>
-        </div>
-
         <div class="footer-note">
           <span>Built like a notebook I plan to keep updating, not a page I finish once.</span>
           <span>Rishi Singhvi / 2026</span>
