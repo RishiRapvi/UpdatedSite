@@ -296,6 +296,302 @@
       margin-top: 0.05rem;
     }
 
+    .hero-lab {
+      margin-top: 1.7rem;
+      padding: 1.15rem;
+      border-radius: calc(var(--radius-lg) - 2px);
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(24, 111, 183, 0.12), transparent 18%),
+        radial-gradient(circle at 88% 82%, rgba(201, 120, 53, 0.1), transparent 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 240, 231, 0.76));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-lab-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-lab-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+    }
+
+    .hero-lab-ping {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(24, 111, 183, 0.14);
+      animation: hero-lab-pulse 1.8s ease infinite;
+    }
+
+    .hero-lab-intro {
+      margin: 0.8rem 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      max-width: 42rem;
+    }
+
+    .hero-lab-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.95fr) minmax(0, 1.05fr);
+      gap: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .hero-lab-card {
+      position: relative;
+      min-width: 0;
+      padding: 1rem;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.46);
+      overflow: hidden;
+    }
+
+    .hero-lab-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(24, 111, 183, 0.34), rgba(24, 111, 183, 0));
+      pointer-events: none;
+    }
+
+    .hero-lab-card--visual {
+      display: grid;
+      place-items: center;
+      min-height: 290px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(24, 111, 183, 0.14), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(243, 236, 227, 0.6)),
+        rgba(255, 255, 255, 0.35);
+    }
+
+    .hero-lab-card--stack {
+      display: grid;
+      gap: 0.9rem;
+      align-content: start;
+    }
+
+    .hero-lab-card--loop {
+      margin-top: 0.9rem;
+    }
+
+    .hero-radar {
+      position: relative;
+      width: min(100%, 15rem);
+      aspect-ratio: 1;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(24, 111, 183, 0.14);
+      background:
+        radial-gradient(circle, rgba(24, 111, 183, 0.11) 0%, rgba(24, 111, 183, 0.03) 36%, transparent 70%),
+        rgba(255, 255, 255, 0.36);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+    }
+
+    .hero-radar-ring,
+    .hero-radar-sweep,
+    .hero-radar-core {
+      position: absolute;
+      border-radius: 999px;
+    }
+
+    .hero-radar-ring {
+      inset: 12%;
+      border: 1px solid rgba(24, 111, 183, 0.14);
+    }
+
+    .hero-radar-ring--mid {
+      inset: 26%;
+    }
+
+    .hero-radar-ring--inner {
+      inset: 40%;
+    }
+
+    .hero-radar-sweep {
+      inset: 8%;
+      background: conic-gradient(from 45deg, rgba(24, 111, 183, 0.24), transparent 24%, transparent 100%);
+      opacity: 0.9;
+      animation: hero-radar-spin 7.2s linear infinite;
+      mask: radial-gradient(circle, transparent 24%, black 26%);
+    }
+
+    .hero-radar-core {
+      position: relative;
+      z-index: 2;
+      width: 4.4rem;
+      height: 4.4rem;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(24, 111, 183, 0.88), rgba(201, 120, 53, 0.76));
+      color: #fff7ef;
+      font-family: "Roboto Mono", monospace;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+      box-shadow: 0 16px 30px rgba(53, 73, 98, 0.2);
+    }
+
+    .hero-radar-tag {
+      position: absolute;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.34rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(24, 111, 183, 0.14);
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--soft);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.66rem;
+      white-space: nowrap;
+      box-shadow: 0 10px 20px rgba(74, 53, 29, 0.08);
+    }
+
+    .hero-radar-tag::before {
+      content: "";
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.72;
+    }
+
+    .hero-radar-tag--vision {
+      top: 10%;
+      right: -4%;
+      color: #2869af;
+    }
+
+    .hero-radar-tag--founders {
+      bottom: 14%;
+      left: -2%;
+      color: #b56d2e;
+    }
+
+    .hero-radar-tag--shipping {
+      top: 54%;
+      right: -10%;
+      color: #4a8f72;
+    }
+
+    .hero-radar-foot {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.6rem;
+      color: var(--muted);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-lab-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-lab-list {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .hero-lab-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      padding: 0.7rem 0.78rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .hero-lab-item strong {
+      display: block;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .hero-lab-item span {
+      display: block;
+      margin-top: 0.15rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .hero-lab-item code {
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .hero-loop {
+      display: grid;
+      gap: 0.72rem;
+      margin-top: 0.8rem;
+    }
+
+    .hero-loop-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 0.75rem;
+      align-items: center;
+      color: var(--soft);
+      font-size: 0.88rem;
+    }
+
+    .hero-loop-row code {
+      color: var(--accent);
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .hero-loop-bar {
+      position: relative;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: rgba(24, 111, 183, 0.08);
+      overflow: hidden;
+    }
+
+    .hero-loop-bar span {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--fill, 50%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(24, 111, 183, 0.86), rgba(201, 120, 53, 0.72));
+    }
+
+    .hero-loop-note {
+      margin: 0.9rem 0 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
     .hero-side {
       position: relative;
     }
@@ -1346,6 +1642,30 @@
       }
     }
 
+    @keyframes hero-radar-spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes hero-lab-pulse {
+      from {
+        box-shadow: 0 0 0 0 rgba(24, 111, 183, 0.22);
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(24, 111, 183, 0);
+      }
+
+      to {
+        box-shadow: 0 0 0 0 rgba(24, 111, 183, 0);
+      }
+    }
+
     body[data-theme="dark"] {
       --bg: #0d1014;
       --bg-soft: #131922;
@@ -1406,6 +1726,7 @@
 
     body[data-theme="dark"] .photo-card,
     body[data-theme="dark"] .section,
+    body[data-theme="dark"] .hero-lab,
     body[data-theme="dark"] .project-widget,
     body[data-theme="dark"] .mini-card,
     body[data-theme="dark"] .contact-card,
@@ -1480,6 +1801,35 @@
       background: rgba(255, 255, 255, 0.03);
     }
 
+    body[data-theme="dark"] .hero-lab {
+      background:
+        radial-gradient(circle at 12% 16%, rgba(142, 200, 255, 0.12), transparent 18%),
+        radial-gradient(circle at 88% 82%, rgba(242, 193, 127, 0.08), transparent 20%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+        var(--panel);
+    }
+
+    body[data-theme="dark"] .hero-lab-card {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    body[data-theme="dark"] .hero-lab-card--visual {
+      background:
+        radial-gradient(circle at 50% 42%, rgba(142, 200, 255, 0.14), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+        rgba(255, 255, 255, 0.02);
+    }
+
+    body[data-theme="dark"] .hero-radar,
+    body[data-theme="dark"] .hero-lab-item {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    body[data-theme="dark"] .hero-radar-tag {
+      background: rgba(14, 18, 24, 0.76);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+    }
+
     body[data-theme="dark"] .modal-takeaway {
       background: rgba(142, 200, 255, 0.08);
       border-color: rgba(142, 200, 255, 0.14);
@@ -1531,6 +1881,14 @@
       .project-widget--feature .widget-art {
         border-right: 0;
         border-bottom: 1px solid var(--line);
+      }
+
+      .hero-lab-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-lab-card--visual {
+        min-height: 250px;
       }
     }
 
@@ -1638,6 +1996,91 @@
             <li>Co-running PreFlight Startup School, where we help early founders sharpen ideas before they waste months building the wrong thing.</li>
             <li>Studying computer science at Ohio State and learning the hard way that persistence matters way more than looking naturally gifted.</li>
           </ul>
+
+          <div class="hero-lab" aria-label="Mission control">
+            <div class="hero-lab-head">
+              <span class="card-label">mission control</span>
+              <span class="hero-lab-state">
+                <span class="hero-lab-ping"></span>
+                live feed
+              </span>
+            </div>
+            <p class="hero-lab-intro">
+              The part of my brain that is usually running in the background: what I am obsessed
+              with, what I optimize for, and how I keep projects from turning into overbuilt chaos.
+            </p>
+
+            <div class="hero-lab-grid">
+              <article class="hero-lab-card hero-lab-card--visual" aria-hidden="true">
+                <div class="hero-radar">
+                  <span class="hero-radar-sweep"></span>
+                  <span class="hero-radar-ring"></span>
+                  <span class="hero-radar-ring hero-radar-ring--mid"></span>
+                  <span class="hero-radar-ring hero-radar-ring--inner"></span>
+                  <span class="hero-radar-core">rs</span>
+                  <span class="hero-radar-tag hero-radar-tag--vision">vision</span>
+                  <span class="hero-radar-tag hero-radar-tag--founders">founders</span>
+                  <span class="hero-radar-tag hero-radar-tag--shipping">shipping</span>
+                </div>
+                <div class="hero-radar-foot">
+                  <span>signal locked</span>
+                  <span>useful &gt; flashy</span>
+                </div>
+              </article>
+
+              <div class="hero-lab-card hero-lab-card--stack">
+                <h3 class="hero-lab-title">What I optimize for</h3>
+                <div class="hero-lab-list">
+                  <div class="hero-lab-item">
+                    <div>
+                      <strong>Useful products</strong>
+                      <span>If someone feels the value fast, I care.</span>
+                    </div>
+                    <code>users++</code>
+                  </div>
+                  <div class="hero-lab-item">
+                    <div>
+                      <strong>Clear thinking</strong>
+                      <span>Simplify the idea before multiplying the code.</span>
+                    </div>
+                    <code>noise--</code>
+                  </div>
+                  <div class="hero-lab-item">
+                    <div>
+                      <strong>Real momentum</strong>
+                      <span>Ship, learn, tighten, repeat without the fake startup theater.</span>
+                    </div>
+                    <code>ship()</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <article class="hero-lab-card hero-lab-card--loop">
+              <h3 class="hero-lab-title">Build loop right now</h3>
+              <div class="hero-loop">
+                <div class="hero-loop-row">
+                  <code>talk_to_users</code>
+                  <div class="hero-loop-bar" aria-hidden="true"><span style="--fill: 94%"></span></div>
+                  <span>always on</span>
+                </div>
+                <div class="hero-loop-row">
+                  <code>cut_the_fluff</code>
+                  <div class="hero-loop-bar" aria-hidden="true"><span style="--fill: 81%"></span></div>
+                  <span>high priority</span>
+                </div>
+                <div class="hero-loop-row">
+                  <code>ship_the_thing</code>
+                  <div class="hero-loop-bar" aria-hidden="true"><span style="--fill: 88%"></span></div>
+                  <span>in motion</span>
+                </div>
+              </div>
+              <p class="hero-loop-note">
+                I like products that feel sharp, honest, and just a little obsessive in the best
+                possible way.
+              </p>
+            </article>
+          </div>
         </div>
 
         <aside class="hero-side">
