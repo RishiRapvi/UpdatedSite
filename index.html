@@ -192,20 +192,13 @@
     .hero {
       display: grid;
       grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.9fr);
-      grid-template-areas:
-        "copy photo"
-        "cta photo";
       gap: 1.55rem 2.4rem;
       align-items: start;
       padding: 4.75rem 0 2.25rem;
     }
 
     .hero-copy-top {
-      grid-area: copy;
-    }
-
-    .hero-cta-block {
-      grid-area: cta;
+      align-self: start;
     }
 
     .shell-line {
@@ -304,7 +297,6 @@
     }
 
     .hero-side {
-      grid-area: photo;
       position: relative;
     }
 
@@ -1525,10 +1517,7 @@
       }
 
       .hero {
-        grid-template-areas:
-          "copy"
-          "photo"
-          "cta";
+        grid-template-columns: 1fr;
         gap: 1.3rem;
       }
 
@@ -1625,6 +1614,30 @@
             somewhere between AI, computer vision, startups, and "there has to be a better way to do
             this" energy.
           </p>
+          <div class="hero-links">
+            <a class="chip-link" href="https://github.com/RishiRapvi" target="_blank" rel="noreferrer">
+              <span>01</span>
+              <span>GitHub</span>
+            </a>
+            <a class="chip-link" href="https://www.linkedin.com/in/lockedin999" target="_blank" rel="noreferrer">
+              <span>02</span>
+              <span>LinkedIn</span>
+            </a>
+            <a class="chip-link" href="https://faceframeai.com" target="_blank" rel="noreferrer">
+              <span>03</span>
+              <span>FaceFrame</span>
+            </a>
+            <a class="chip-link" href="./resume/Rishi_Singhvi_Resume.pdf" download>
+              <span>04</span>
+              <span>Resume</span>
+            </a>
+          </div>
+
+          <ul class="quick-notes">
+            <li>Building FaceFrame, an AI glasses try-on product that tries to make online eyewear shopping feel less like guessing.</li>
+            <li>Co-running PreFlight Startup School, where we help early founders sharpen ideas before they waste months building the wrong thing.</li>
+            <li>Studying computer science at Ohio State and learning the hard way that persistence matters way more than looking naturally gifted.</li>
+          </ul>
         </div>
 
         <aside class="hero-side">
@@ -1696,33 +1709,6 @@
             </div>
           </div>
         </aside>
-
-        <div class="hero-cta-block">
-          <div class="hero-links">
-            <a class="chip-link" href="https://github.com/RishiRapvi" target="_blank" rel="noreferrer">
-              <span>01</span>
-              <span>GitHub</span>
-            </a>
-            <a class="chip-link" href="https://www.linkedin.com/in/lockedin999" target="_blank" rel="noreferrer">
-              <span>02</span>
-              <span>LinkedIn</span>
-            </a>
-            <a class="chip-link" href="https://faceframeai.com" target="_blank" rel="noreferrer">
-              <span>03</span>
-              <span>FaceFrame</span>
-            </a>
-            <a class="chip-link" href="./resume/Rishi_Singhvi_Resume.pdf" download>
-              <span>04</span>
-              <span>Resume</span>
-            </a>
-          </div>
-
-          <ul class="quick-notes">
-            <li>Building FaceFrame, an AI glasses try-on product that tries to make online eyewear shopping feel less like guessing.</li>
-            <li>Co-running PreFlight Startup School, where we help early founders sharpen ideas before they waste months building the wrong thing.</li>
-            <li>Studying computer science at Ohio State and learning the hard way that persistence matters way more than looking naturally gifted.</li>
-          </ul>
-        </div>
       </section>
 
       <section class="section section--about" id="about" data-reveal>
