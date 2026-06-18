@@ -7,14 +7,14 @@ import json
 import mimetypes
 import os
 import secrets
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from http import HTTPStatus, cookies
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from wsgiref.simple_server import WSGIRequestHandler, make_server
 
 
 ROOT = Path(__file__).resolve().parent
@@ -24,6 +24,15 @@ DEFAULT_PROFILE_URL = "https://open.spotify.com/user/31hpqr3lwz6jeevlxlqtazh4csz
 DEFAULT_PROFILE_NAME = "Mahesh Aithal (RS)"
 SPOTIFY_SCOPES = "user-read-currently-playing user-read-recently-played"
 LOOPBACK_HOSTS = {"127.0.0.1", "::1", "::ffff:127.0.0.1", "localhost"}
+
+mimetypes.add_type("application/javascript", ".js")
+
+
+@dataclass
+class AppResponse:
+    status: int
+    body: bytes
+    headers: list[tuple[str, str]]
 
 
 def parse_env_file(path: Path) -> dict[str, str]:
@@ -67,6 +76,9 @@ def load_config() -> dict[str, str]:
 
 
 def persist_config(updates: dict[str, str]) -> None:
+    if os.environ.get("VERCEL"):
+        return
+
     current = parse_env_file(ENV_PATH)
     current.update({key: value for key, value in updates.items() if value})
     if "SPOTIFY_REDIRECT_URI" not in current:
@@ -78,22 +90,40 @@ def persist_config(updates: dict[str, str]) -> None:
     write_env_file(ENV_PATH, current)
 
 
-def json_response(handler: "SiteHandler", payload: dict, status: int = 200) -> None:
-    body = json.dumps(payload).encode("utf-8")
-    handler.send_response(status)
-    handler.send_header("Content-Type", "application/json; charset=utf-8")
-    handler.send_header("Cache-Control", "no-store")
-    handler.send_header("Content-Length", str(len(body)))
-    handler.end_headers()
-    handler.wfile.write(body)
+def build_response(
+    body: bytes,
+    *,
+    status: int = 200,
+    content_type: str = "text/plain; charset=utf-8",
+    headers: list[tuple[str, str]] | None = None,
+) -> AppResponse:
+    merged_headers = [("Content-Type", content_type), ("Content-Length", str(len(body)))]
+    if headers:
+        merged_headers.extend(headers)
+    return AppResponse(status=status, body=body, headers=merged_headers)
 
 
-def html_response(handler: "SiteHandler", title: str, body_html: str, status: int = 200) -> None:
-    document = f"""<!DOCTYPE html>
+def json_response(payload: dict, status: int = 200) -> AppResponse:
+    return build_response(
+        json.dumps(payload).encode("utf-8"),
+        status=status,
+        content_type="application/json; charset=utf-8",
+        headers=[("Cache-Control", "no-store")],
+    )
+
+
+def page_document(title: str, body_html: str, meta_refresh: str | None = None) -> bytes:
+    refresh_tag = (
+        f'<meta http-equiv="refresh" content="{html.escape(meta_refresh, quote=True)}" />'
+        if meta_refresh
+        else ""
+    )
+    return f"""<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {refresh_tag}
     <title>{html.escape(title)}</title>
     <style>
       body {{
@@ -118,8 +148,13 @@ def html_response(handler: "SiteHandler", title: str, body_html: str, status: in
         color: #8ec8ff;
       }}
 
-      code {{
+      code,
+      pre {{
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      }}
+
+      pre {{
+        white-space: pre-wrap;
       }}
     </style>
   </head>
@@ -129,13 +164,26 @@ def html_response(handler: "SiteHandler", title: str, body_html: str, status: in
       {body_html}
     </main>
   </body>
-</html>"""
-    encoded = document.encode("utf-8")
-    handler.send_response(status)
-    handler.send_header("Content-Type", "text/html; charset=utf-8")
-    handler.send_header("Content-Length", str(len(encoded)))
-    handler.end_headers()
-    handler.wfile.write(encoded)
+</html>""".encode("utf-8")
+
+
+def html_response(title: str, body_html: str, *, status: int = 200, meta_refresh: str | None = None) -> AppResponse:
+    return build_response(
+        page_document(title, body_html, meta_refresh=meta_refresh),
+        status=status,
+        content_type="text/html; charset=utf-8",
+    )
+
+
+def redirect_response(location: str, *, headers: list[tuple[str, str]] | None = None, status: int = 302) -> AppResponse:
+    merged_headers = [("Location", location)]
+    if headers:
+        merged_headers.extend(headers)
+    return build_response(b"", status=status, content_type="text/plain; charset=utf-8", headers=merged_headers)
+
+
+def not_found_response() -> AppResponse:
+    return html_response("Not found", "<p>That page does not exist.</p>", status=404)
 
 
 def spotify_token_request(config: dict[str, str], params: dict[str, str]) -> dict:
@@ -174,7 +222,10 @@ def refresh_access_token(config: dict[str, str]) -> str:
         },
     )
     if response.get("refresh_token"):
-        persist_config({"SPOTIFY_REFRESH_TOKEN": response["refresh_token"]})
+        try:
+            persist_config({"SPOTIFY_REFRESH_TOKEN": response["refresh_token"]})
+        except OSError:
+            pass
     return response["access_token"]
 
 
@@ -202,7 +253,7 @@ def spotify_payload(config: dict[str, str]) -> tuple[int, dict]:
     if not config.get("SPOTIFY_CLIENT_ID") or not config.get("SPOTIFY_CLIENT_SECRET"):
         return 200, {
             "status": "setup_required",
-            "message": "Add your Spotify app credentials to .env.local, then run the local connect step once.",
+            "message": "Add your Spotify app credentials to .env.local or Vercel project env vars, then run the local connect step once.",
             "profileName": profile_name,
             "profileUrl": profile_url,
             "requiredKeys": ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
@@ -211,7 +262,7 @@ def spotify_payload(config: dict[str, str]) -> tuple[int, dict]:
     if not config.get("SPOTIFY_REFRESH_TOKEN"):
         return 200, {
             "status": "auth_required",
-            "message": "Spotify app credentials are set. Connect your Spotify account from this machine once.",
+            "message": "Spotify app credentials are set. Connect your Spotify account from this machine once so the site has a refresh token.",
             "profileName": profile_name,
             "profileUrl": profile_url,
             "loginUrl": "/spotify/login",
@@ -273,210 +324,224 @@ def spotify_payload(config: dict[str, str]) -> tuple[int, dict]:
         }
 
 
-class SiteHandler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(ROOT), **kwargs)
+def client_address(environ: dict[str, str]) -> str:
+    forwarded = environ.get("HTTP_X_FORWARDED_FOR", "")
+    if forwarded:
+        host = forwarded.split(",", 1)[0].strip()
+    else:
+        host = environ.get("REMOTE_ADDR", "")
+    return host.split("%", 1)[0]
 
+
+def is_loopback_request(environ: dict[str, str]) -> bool:
+    return client_address(environ) in LOOPBACK_HOSTS
+
+
+def request_path(environ: dict[str, str]) -> str:
+    return urllib.parse.unquote(environ.get("PATH_INFO", "") or "/")
+
+
+def resolve_public_file(url_path: str) -> Path | None:
+    relative = url_path.lstrip("/") or "index.html"
+    candidate = (ROOT / relative).resolve()
+
+    try:
+        relative_candidate = candidate.relative_to(ROOT)
+    except ValueError:
+        return None
+
+    if any(part.startswith(".") for part in relative_candidate.parts):
+        return None
+
+    if not candidate.is_file():
+        return None
+
+    return candidate
+
+
+def serve_file(file_path: Path, *, cache_control: str | None = None) -> AppResponse:
+    body = file_path.read_bytes()
+    content_type, _ = mimetypes.guess_type(str(file_path))
+    headers: list[tuple[str, str]] = []
+    if cache_control:
+        headers.append(("Cache-Control", cache_control))
+    return build_response(
+        body,
+        content_type=content_type or "application/octet-stream",
+        headers=headers,
+    )
+
+
+def handle_spotify_login(environ: dict[str, str]) -> AppResponse:
+    if not is_loopback_request(environ):
+        return html_response(
+            "Spotify auth locked down",
+            (
+                "<p>This route only works from your local machine so nobody else can overwrite the Spotify account linked to the site.</p>"
+                "<p>For Vercel, keep the deployed site read-only and set <code>SPOTIFY_REFRESH_TOKEN</code> in the project environment variables.</p>"
+            ),
+            status=403,
+        )
+
+    config = load_config()
+    missing = [key for key in ("SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET") if not config.get(key)]
+    if missing:
+        missing_html = "".join(f"<li><code>{html.escape(item)}</code></li>" for item in missing)
+        return html_response(
+            "Spotify setup missing credentials",
+            (
+                "<p>Add these keys to <code>.env.local</code> first, then try again.</p>"
+                f"<ul>{missing_html}</ul>"
+            ),
+            status=400,
+        )
+
+    state = secrets.token_urlsafe(24)
+    query = urllib.parse.urlencode(
+        {
+            "response_type": "code",
+            "client_id": config["SPOTIFY_CLIENT_ID"],
+            "scope": SPOTIFY_SCOPES,
+            "redirect_uri": config["SPOTIFY_REDIRECT_URI"],
+            "state": state,
+            "show_dialog": "true",
+        }
+    )
+    cookie = cookies.SimpleCookie()
+    cookie["spotify_auth_state"] = state
+    cookie["spotify_auth_state"]["httponly"] = True
+    cookie["spotify_auth_state"]["path"] = "/spotify/callback"
+    cookie["spotify_auth_state"]["samesite"] = "Lax"
+
+    return redirect_response(
+        f"https://accounts.spotify.com/authorize?{query}",
+        headers=[("Set-Cookie", cookie.output(header="").strip())],
+    )
+
+
+def handle_spotify_callback(environ: dict[str, str]) -> AppResponse:
+    if not is_loopback_request(environ):
+        return html_response(
+            "Spotify auth locked down",
+            "<p>This route only works from your local machine. The deployed Vercel site should use a saved <code>SPOTIFY_REFRESH_TOKEN</code> env var instead.</p>",
+            status=403,
+        )
+
+    query = urllib.parse.parse_qs(environ.get("QUERY_STRING", ""))
+    if query.get("error"):
+        return html_response(
+            "Spotify authorization failed",
+            f"<p>Spotify returned <code>{html.escape(query['error'][0])}</code>. You can close this tab and try again.</p>",
+            status=400,
+        )
+
+    code = query.get("code", [None])[0]
+    state = query.get("state", [None])[0]
+    state_cookie = cookies.SimpleCookie(environ.get("HTTP_COOKIE", "")).get("spotify_auth_state")
+
+    if not code or not state or not state_cookie or state_cookie.value != state:
+        return html_response(
+            "Spotify authorization failed",
+            "<p>The Spotify callback was missing a valid authorization state. Try the login step again.</p>",
+            status=400,
+        )
+
+    config = load_config()
+    try:
+        token_payload = spotify_token_request(
+            config,
+            {
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": config["SPOTIFY_REDIRECT_URI"],
+            },
+        )
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        return html_response(
+            "Spotify token exchange failed",
+            f"<p>Spotify rejected the token exchange.</p><pre>{html.escape(detail)}</pre>",
+            status=400,
+        )
+
+    refresh_token = token_payload.get("refresh_token")
+    if not refresh_token:
+        return html_response(
+            "Spotify token exchange incomplete",
+            "<p>Spotify did not return a refresh token. Make sure you approved the app and try again.</p>",
+            status=400,
+        )
+
+    try:
+        persist_config({"SPOTIFY_REFRESH_TOKEN": refresh_token})
+    except OSError as exc:
+        return html_response(
+            "Spotify token storage failed",
+            f"<p>The refresh token was created, but writing <code>.env.local</code> failed.</p><pre>{html.escape(str(exc))}</pre>",
+            status=500,
+        )
+
+    cookie = cookies.SimpleCookie()
+    cookie["spotify_auth_state"] = ""
+    cookie["spotify_auth_state"]["path"] = "/spotify/callback"
+    cookie["spotify_auth_state"]["expires"] = "Thu, 01 Jan 1970 00:00:00 GMT"
+
+    redirect_target = "/index.html?spotify=connected#connect"
+    body = (
+        "<p>Your Spotify refresh token is saved in <code>.env.local</code>.</p>"
+        f"<p><a href=\"{redirect_target}\">Go back to the site</a> and refresh the page if it does not update automatically.</p>"
+    )
+    response = html_response("Spotify connected", body, meta_refresh=f"2; url={redirect_target}")
+    response.headers.append(("Set-Cookie", cookie.output(header="").strip()))
+    return response
+
+
+def wsgi_app(environ: dict[str, str], start_response):
+    method = (environ.get("REQUEST_METHOD") or "GET").upper()
+    if method not in {"GET", "HEAD"}:
+        response = build_response(
+            b"Method not allowed",
+            status=405,
+            headers=[("Allow", "GET, HEAD")],
+        )
+        start_response(f"{response.status} {HTTPStatus(response.status).phrase}", response.headers)
+        return [] if method == "HEAD" else [response.body]
+
+    path = request_path(environ)
+
+    if path in {"/", "/index.html"}:
+        response = serve_file(ROOT / "index.html", cache_control="no-store")
+    elif path == "/api/spotify":
+        status, payload = spotify_payload(load_config())
+        response = json_response(payload, status)
+    elif path == "/spotify/login":
+        response = handle_spotify_login(environ)
+    elif path == "/spotify/callback":
+        response = handle_spotify_callback(environ)
+    else:
+        file_path = resolve_public_file(path)
+        response = serve_file(file_path) if file_path else not_found_response()
+
+    start_response(f"{response.status} {HTTPStatus(response.status).phrase}", response.headers)
+    return [] if method == "HEAD" else [response.body]
+
+
+app = wsgi_app
+
+
+class LocalRequestHandler(WSGIRequestHandler):
     def log_message(self, format: str, *args) -> None:  # noqa: A003
         super().log_message(format, *args)
 
-    def is_loopback_request(self) -> bool:
-        host = (self.client_address[0] or "").split("%", 1)[0]
-        return host in LOOPBACK_HOSTS
-
-    def serve_index(self) -> None:
-        self.path = "/index.html"
-        return super().do_GET()
-
-    def do_GET(self) -> None:  # noqa: N802
-        parsed = urllib.parse.urlparse(self.path)
-
-        if parsed.path in {"/", ""}:
-            return self.serve_index()
-
-        if parsed.path == "/api/spotify":
-            status, payload = spotify_payload(load_config())
-            return json_response(self, payload, status)
-
-        if parsed.path == "/spotify/login":
-            return self.handle_spotify_login()
-
-        if parsed.path == "/spotify/callback":
-            return self.handle_spotify_callback(parsed)
-
-        return super().do_GET()
-
-    def handle_spotify_login(self) -> None:
-        if not self.is_loopback_request():
-            return html_response(
-                self,
-                "Spotify auth locked down",
-                "<p>This route only works from your local machine so nobody else can overwrite the Spotify account linked to the site.</p>",
-                status=403,
-            )
-
-        config = load_config()
-        missing = [key for key in ("SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET") if not config.get(key)]
-        if missing:
-            missing_html = "".join(f"<li><code>{html.escape(item)}</code></li>" for item in missing)
-            return html_response(
-                self,
-                "Spotify setup missing credentials",
-                (
-                    "<p>Add these keys to <code>.env.local</code> first, then try again.</p>"
-                    f"<ul>{missing_html}</ul>"
-                ),
-                status=400,
-            )
-
-        state = secrets.token_urlsafe(24)
-        scope = SPOTIFY_SCOPES
-        query = urllib.parse.urlencode(
-            {
-                "response_type": "code",
-                "client_id": config["SPOTIFY_CLIENT_ID"],
-                "scope": scope,
-                "redirect_uri": config["SPOTIFY_REDIRECT_URI"],
-                "state": state,
-                "show_dialog": "true",
-            }
-        )
-        cookie = cookies.SimpleCookie()
-        cookie["spotify_auth_state"] = state
-        cookie["spotify_auth_state"]["httponly"] = True
-        cookie["spotify_auth_state"]["path"] = "/spotify/callback"
-        cookie["spotify_auth_state"]["samesite"] = "Lax"
-
-        self.send_response(302)
-        self.send_header("Set-Cookie", cookie.output(header="").strip())
-        self.send_header("Location", f"https://accounts.spotify.com/authorize?{query}")
-        self.end_headers()
-
-    def handle_spotify_callback(self, parsed) -> None:
-        if not self.is_loopback_request():
-            return html_response(
-                self,
-                "Spotify auth locked down",
-                "<p>This route only works from your local machine.</p>",
-                status=403,
-            )
-
-        query = urllib.parse.parse_qs(parsed.query)
-        if query.get("error"):
-            return html_response(
-                self,
-                "Spotify authorization failed",
-                f"<p>Spotify returned <code>{html.escape(query['error'][0])}</code>. You can close this tab and try again.</p>",
-                status=400,
-            )
-
-        code = query.get("code", [None])[0]
-        state = query.get("state", [None])[0]
-        state_cookie = cookies.SimpleCookie(self.headers.get("Cookie", "")).get("spotify_auth_state")
-
-        if not code or not state or not state_cookie or state_cookie.value != state:
-            return html_response(
-                self,
-                "Spotify authorization failed",
-                "<p>The Spotify callback was missing a valid authorization state. Try the login step again.</p>",
-                status=400,
-            )
-
-        config = load_config()
-        try:
-            token_payload = spotify_token_request(
-                config,
-                {
-                    "grant_type": "authorization_code",
-                    "code": code,
-                    "redirect_uri": config["SPOTIFY_REDIRECT_URI"],
-                },
-            )
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            return html_response(
-                self,
-                "Spotify token exchange failed",
-                f"<p>Spotify rejected the token exchange.</p><pre>{html.escape(detail)}</pre>",
-                status=400,
-            )
-
-        refresh_token = token_payload.get("refresh_token")
-        if not refresh_token:
-            return html_response(
-                self,
-                "Spotify token exchange incomplete",
-                "<p>Spotify did not return a refresh token. Make sure you approved the app and try again.</p>",
-                status=400,
-            )
-
-        persist_config({"SPOTIFY_REFRESH_TOKEN": refresh_token})
-
-        cookie = cookies.SimpleCookie()
-        cookie["spotify_auth_state"] = ""
-        cookie["spotify_auth_state"]["path"] = "/spotify/callback"
-        cookie["spotify_auth_state"]["expires"] = "Thu, 01 Jan 1970 00:00:00 GMT"
-
-        redirect_target = "/index.html?spotify=connected#connect"
-        body = (
-            "<p>Your Spotify refresh token is saved in <code>.env.local</code>.</p>"
-            f"<p><a href=\"{redirect_target}\">Go back to the site</a> and refresh the page if it does not update automatically.</p>"
-        )
-        encoded = f"""<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="2; url={html.escape(redirect_target, quote=True)}" />
-    <title>Spotify connected</title>
-    <style>
-      body {{
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #11151b;
-        color: #f3f5f8;
-      }}
-
-      main {{
-        width: min(92vw, 620px);
-        padding: 1.4rem;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }}
-
-      a {{ color: #8ec8ff; }}
-      code {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
-    </style>
-  </head>
-  <body>
-    <main>
-      <h1>Spotify connected</h1>
-      {body}
-    </main>
-  </body>
-</html>""".encode("utf-8")
-        self.send_response(200)
-        self.send_header("Set-Cookie", cookie.output(header="").strip())
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(encoded)))
-        self.end_headers()
-        self.wfile.write(encoded)
-
 
 def main() -> None:
-    server = ThreadingHTTPServer(("127.0.0.1", PORT), SiteHandler)
-    print(f"Serving on http://127.0.0.1:{PORT}")
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        print("\nShutting down.")
-    finally:
-        server.server_close()
+    with make_server("127.0.0.1", PORT, app, handler_class=LocalRequestHandler) as server:
+        print(f"Serving on http://127.0.0.1:{PORT}")
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            print("\nShutting down.")
 
 
 if __name__ == "__main__":
-    mimetypes.add_type("application/javascript", ".js")
     main()
